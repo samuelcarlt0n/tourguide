@@ -78,7 +78,7 @@ $(document).ready(function () {
                 if (!stop.id.startsWith('#')) throw new Error("The selector must be an id.");
                 _stops.push(new Stop(stop));
             });
-            this.stops = stops;
+            this.stops = _stops;
 
             return this;
         },
