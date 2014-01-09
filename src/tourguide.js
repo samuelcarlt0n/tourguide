@@ -26,12 +26,29 @@ $(document).ready(function () {
     }];
 
 
+
+    var Spotlight = function () {
+        this.$el = $(document.createElement('div')).attr({
+            'id': 'spotlight',
+            'class': 'spotlight'
+        }).appendTo('body');
+
+        this.move = function (top, left, radius) {
+            this.$el.stop(false, false).animate({
+                'top'    : top,
+                'left'   : left,
+                'width'  : radius,
+                'height' : radius
+            });
+        };
+    };
+
     var Stop = function (stopData) {
-        this.$el        = $(stopData.selector);
-        this.headline   = stopData.headline;
-        this.message    = stopData.message;
-        this.dimensions = {width: this.$el.outerWidth(), height: this.$el.outerHeight()};
-        this.position   = this.$el.offset();
+        this.headline       = stopData.headline || '';
+        this.message        = stopData.message || '';
+        this.$el            = $(stopData.selector);
+        this.sizeOf$el      = {width: this.$el.outerWidth(), height: this.$el.outerHeight()};
+        this.positionOf$el  = this.$el.offset();
     };
 
 
@@ -48,65 +65,54 @@ $(document).ready(function () {
     Tour.prototype = {
         stops: [],
         currentStop: null,
-        $spotlight: null,
+        spotlight: null,
 
+        // This essentially acts a builder function for tours (array of stops).
         schedule: function (stops) {
+            var self = this;
             stops.forEach(function (stop) {
                 if (!stop.selector.startsWith('#')) {
                     throw new Error("The selector must be an id");
                 }
-                this.stops.push(
+
+                self.stops.push(
                     new Stop(stop)
                 );
-            }, this);
+            });
         },
 
+        // Start the tour.
         start: function (firstStop) {
-            this.$spotlight = $(document.createElement('div')).attr({
-                'id': 'spotlight',
-                'class': 'spotlight'
-            }).appendTo('body');
-
+            this.spotlight = new Spotlight();
             this.currentStop = firstStop;
             this.jumpToStop(this.currentStop);
         },
 
+        // Move to the next stop on the tour.
         nextStop: function () {
-            if (this.currentStop + 1 > this.stops.length - 1) {
-                return;
-            }
+            if (this.currentStop === this.stops.length - 1) return;  // If there is no next stop.
 
             this.currentStop = this.currentStop + 1;
             this.jumpToStop(this.currentStop);
         },
 
+        // Move to the previous stop on the tour.
         previousStop: function () {
-            if (this.currentStop - 1 === -1) {
-                return;
-            }
+            if (this.currentStop - 1 === -1) return;  // If there is no previous stop.
 
             this.currentStop = this.currentStop - 1;
             this.jumpToStop(this.currentStop);
         },
 
-        jumpToStop: function (stopsIndex) {
-            var stop = this.stops[stopsIndex];
-            this._movespotlight(stop);
-        },
-
-        _movespotlight: function (stop) {
-            var w = stop.dimensions.width, h = stop.dimensions.height;
-            var t = stop.position.top,     l = stop.position.left;
-
-            var size = Math.max(w, h) * (1.33);
-
-            this.$spotlight.stop(false, false).animate({
-                'top': t,
-                'left': l,
-                'width': size,
-                'height': size
-            });
-        }
+        // Jump to any stop on the tour.
+        jumpToStop: function (stopIndex) {
+            var stop = this.stops[stopIndex];
+            this.spotlight.move(
+               stop.positionOf$el.top,
+               stop.positionOf$el.left,
+               (Math.max(stop.sizeOf$el.w, stop.sizeOf$el.h) * 1.33)
+            );
+       },
     };
 
 
