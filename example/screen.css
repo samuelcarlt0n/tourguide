@@ -1,4 +1,4 @@
-/* yolo */
+/* hashtag yolo */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -16,6 +16,7 @@ body {
 
 .obj {
     position: absolute;
+    z-index: 0;  /* Just being explicit. */
     width: 50px;
     height: 50px;
     background-color: green;
@@ -42,4 +43,14 @@ body {
 #three {
     top: 30%;
     left: 10%;
+}
+
+
+.spotlight {
+    position: absolute;
+    z-index: 100;  /* Overcompensating for something? */
+    height: 50px;
+    width: 50px;
+    border-radius: 999px;  /* the size of the spotlight is unpredictable, this guarentees it will stay a circle. */
+    background: yellow;
 }
