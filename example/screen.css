@@ -8,6 +8,7 @@
 html,
 body {
     height: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -34,10 +35,5 @@ body {
 
 
 .spotlight {
-    position: absolute;
-    z-index: 100;  /* Overcompensating for something? */
-    height: 50px;
-    width: 50px;
-    border-radius: 999px;  /* the size of the spotlight is unpredictable, this guarentees it will stay a circle. */
-    background: yellow;
+    position: relative;
 }

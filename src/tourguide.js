@@ -30,17 +30,24 @@ $(document).ready(function () {
 
     // Object representing a spotlight for the tour.
     var Spotlight = function () {
-        this.$el = $(document.createElement('div')).attr({
+        this.el = Snap(2000, 2000).attr({
             'id': 'spotlight',
             'class': 'spotlight'
-        }).appendTo('body');
+        });
+        this.$el = $(this.el.node);
+        // this.filterBlur = this.el.paper.filter('<feGaussianBlur stdDeviation="2"/>');
+        // 'M0,0v100h100V0H0z M50,50a25,25 6.29 0,0z'
+        // this.pinHole = this.el.path('M0,0v100h100V0H0z M25,25a25,25 6.29 0,0z').attr({
+        this.pinHole = this.el.path('M0,0v2000h2000V0H0z M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z').attr({
+            fill: "#222222",
+            fillOpacity: "0.75",
+            // filter: this.filterBlur
+        });
 
         this.move = function (top, left, radius) {
             this.$el.stop(false, false).animate({
-                'top' : top,
-                'left' : left,
-                'width' : radius,
-                'height' : radius
+                'top': top - (this.$el.height() / 2),
+                'left': left - (this.$el.width() / 2)
             });
         };
     };
@@ -54,6 +61,10 @@ $(document).ready(function () {
         this.positionOf$el = this.$el.offset();                // {top, left} of the $el.
         this.sizeOf$el     = {width  : this.$el.outerWidth(),  // {width, height} of the $el.
                               height : this.$el.outerHeight()};
+        this.centerOf$el   = {
+            top: (this.sizeOf$el.height / 2) + this.positionOf$el.top,
+            left: (this.sizeOf$el.width / 2) + this.positionOf$el.left
+        }
     };
 
 
@@ -111,9 +122,9 @@ $(document).ready(function () {
         jumpToStop: function (stopIndex) {
             var stop = this.stops[stopIndex];
             this.spotlight.move(
-               stop.positionOf$el.top,
-               stop.positionOf$el.left,
-               (Math.max(stop.sizeOf$el.w, stop.sizeOf$el.h) * 1.33)
+               stop.centerOf$el.top,
+               stop.centerOf$el.left,
+               (Math.max(stop.sizeOf$el.width, stop.sizeOf$el.height) * 1.33)
             );
        },
     };
@@ -134,8 +145,8 @@ $(document).ready(function () {
 
         this.onKeyUp = function (event) {
             event.preventDefault();
-            if (event.keyCode === LEFT_KEY) this.tour.previousStop();
-            if (event.keyCode === RIGHT_KEY) this.tour.nextStop();
+            if (event.which === LEFT_KEY) this.tour.previousStop();
+            if (event.which === RIGHT_KEY) this.tour.nextStop();
         };
 
         this.bind().enable();
