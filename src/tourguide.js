@@ -62,9 +62,8 @@ $(document).ready(function () {
         stops = stops || STOPS;
         firstStop = firstStop || FIRST_STOP;
 
-        if (stops.length) {
-            this.schedule(stops).start(firstStop);
-        }
+        // If we have stops then start the tour otherwise exit.
+        return !!stops.length ? this.schedule(stops).start(firstStop) : false;
     };
 
     Tour.prototype = {
@@ -88,6 +87,8 @@ $(document).ready(function () {
             this.spotlight = new Spotlight();
             this.currentStop = firstStop;
             this.jumpToStop(this.currentStop);
+
+            return this;
         },
 
         // Move to the next stop on the tour.
