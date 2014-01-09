@@ -6,27 +6,29 @@ $(document).ready(function () {
         };
     }
 
+
     var FIRST_STOP = 0;  // Index to start the tour at.
 
     var LEFT_KEY  = 37;  // Key code for left key.
     var RIGHT_KEY = 39;  // Key code for right key.
 
+    // Fixture data.
     var STOPS = [{
         id       : '#one',
-        headline : 'Stop one',
-        message  : 'A lot more stuf describing this stop.'
+        headline : "Stop one",
+        message  : "A lot more stuf describing this stop."
     }, {
         id       : '#two',
-        headline : 'Stop Two',
-        message  : 'Some text describing this stop.'
+        headline : "Stop Two",
+        message  : "Some text describing this stop."
     }, {
         id       : '#three',
-        headline : 'Stop Three',
-        message  : 'I need to install little ipsum describing this stop.'
+        headline : "Stop Three",
+        message  : "I need to install little ipsum describing this stop."
     }];
 
 
-
+    // Object representing a spotlight for the tour.
     var Spotlight = function () {
         this.$el = $(document.createElement('div')).attr({
             'id': 'spotlight',
@@ -35,51 +37,50 @@ $(document).ready(function () {
 
         this.move = function (top, left, radius) {
             this.$el.stop(false, false).animate({
-                'top'    : top,
-                'left'   : left,
-                'width'  : radius,
+                'top' : top,
+                'left' : left,
+                'width' : radius,
                 'height' : radius
             });
         };
     };
 
 
+    // Object representing a single stop on the tour.
     var Stop = function (stopData) {
-        this.headline       = stopData.headline || '';
-        this.message        = stopData.message || '';
-        this.$el            = $(stopData.id);
-        this.sizeOf$el      = {width: this.$el.outerWidth(), height: this.$el.outerHeight()};
-        this.positionOf$el  = this.$el.offset();
+        this.headline      = stopData.headline || '';          // Main text.
+        this.message       = stopData.message || '';           // Supporting copy.
+        this.$el           = $(stopData.id);                   // jQuery instance of the dom node.
+        this.positionOf$el = this.$el.offset();                // {top, left} of the $el.
+        this.sizeOf$el     = {width  : this.$el.outerWidth(),  // {width, height} of the $el.
+                              height : this.$el.outerHeight()};
     };
 
 
+    // Object representing a tour.
     var Tour = function (stops, firstStop) {
         stops = stops || STOPS;
         firstStop = firstStop || FIRST_STOP;
 
         if (stops.length) {
-            this.schedule(stops);
-            this.start(firstStop);
+            this.schedule(stops).start(firstStop);
         }
     };
 
     Tour.prototype = {
-        stops: [],
-        currentStop: null,
-        spotlight: null,
-
-        // This essentially acts a builder function for tours (array of stops).
+        // This essentially acts a builder function for tours.
         schedule: function (stops) {
-            var self = this;
-            stops.forEach(function (stop) {
-                if (!stop.id.startsWith('#')) {
-                    throw new Error("The selector must be an id");
-                }
+            this.currentStop = null;
+            this.spotlight = null;
 
-                self.stops.push(
-                    new Stop(stop)
-                );
+            var _stops = [];
+            stops.forEach(function (stop) {
+                if (!stop.id.startsWith('#')) throw new Error("The selector must be an id.");
+                _stops.push(new Stop(stop));
             });
+            this.stops = stops;
+
+            return this;
         },
 
         // Start the tour.
@@ -131,6 +132,7 @@ $(document).ready(function () {
         };
 
         this.onKeyUp = function (event) {
+            event.preventDefault();
             if (event.keyCode === LEFT_KEY) this.tour.previousStop();
             if (event.keyCode === RIGHT_KEY) this.tour.nextStop();
         };
