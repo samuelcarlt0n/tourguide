@@ -139,5 +139,14 @@ $(document).ready(function () {
     };
 
 
+    // Randomly place all of the test stops on the page.
+    (function shuffleTestStops () {
+        $('.obj').each(function () {
+            this.style.top = (Math.floor(Math.random() * 100) + 1) + '%';
+            this.style.left = (Math.floor(Math.random() * 100) + 1) + '%';
+        });
+    })();
+
+
     window.tourGuide = new TourGuide();
 });
