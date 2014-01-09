@@ -12,15 +12,15 @@ $(document).ready(function () {
     var RIGHT_KEY = 39;  // Key code for right key.
 
     var STOPS = [{
-        selector : '#one',
+        id       : '#one',
         headline : 'Stop one',
         message  : 'A lot more stuf describing this stop.'
     }, {
-        selector : '#two',
+        id       : '#two',
         headline : 'Stop Two',
         message  : 'Some text describing this stop.'
     }, {
-        selector : '#three',
+        id       : '#three',
         headline : 'Stop Three',
         message  : 'I need to install little ipsum describing this stop.'
     }];
@@ -43,10 +43,11 @@ $(document).ready(function () {
         };
     };
 
+
     var Stop = function (stopData) {
         this.headline       = stopData.headline || '';
         this.message        = stopData.message || '';
-        this.$el            = $(stopData.selector);
+        this.$el            = $(stopData.id);
         this.sizeOf$el      = {width: this.$el.outerWidth(), height: this.$el.outerHeight()};
         this.positionOf$el  = this.$el.offset();
     };
@@ -71,7 +72,7 @@ $(document).ready(function () {
         schedule: function (stops) {
             var self = this;
             stops.forEach(function (stop) {
-                if (!stop.selector.startsWith('#')) {
+                if (!stop.id.startsWith('#')) {
                     throw new Error("The selector must be an id");
                 }
 
