@@ -145,8 +145,8 @@ $(document).ready(function () {
 
         this.onKeyUp = function (event) {
             event.preventDefault();
-            if (event.which === LEFT_KEY) this.tour.previousStop();
-            if (event.which === RIGHT_KEY) this.tour.nextStop();
+            if (event.keyCode === LEFT_KEY) this.tour.previousStop();
+            if (event.keyCode === RIGHT_KEY) this.tour.nextStop();
         };
 
         this.bind().enable();
