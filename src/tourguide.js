@@ -30,18 +30,16 @@ $(document).ready(function () {
 
     // Object representing a spotlight for the tour.
     var Spotlight = function () {
-        this.el = Snap(2000, 2000).attr({
+        this.snap = Snap(2000, 2000).attr({
             'id': 'spotlight',
             'class': 'spotlight'
         });
-        this.$el = $(this.el.node);
-        // this.filterBlur = this.el.paper.filter('<feGaussianBlur stdDeviation="2"/>');
-        // 'M0,0v100h100V0H0z M50,50a25,25 6.29 0,0z'
-        // this.pinHole = this.el.path('M0,0v100h100V0H0z M25,25a25,25 6.29 0,0z').attr({
-        this.pinHole = this.el.path('M0,0v2000h2000V0H0z M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z').attr({
+        this.$el = $(this.snap.node);
+        this.filterBlur = this.el.paper.filter('<feGaussianBlur stdDeviation="2"/>');
+        this.pinHole = this.snap.path('M0,0v2000h2000V0H0z M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z').attr({
             fill: "#222222",
             fillOpacity: "0.75",
-            // filter: this.filterBlur
+            /* filter: this.filterBlur */
         });
 
         this.move = function (top, left, radius) {
@@ -55,16 +53,22 @@ $(document).ready(function () {
 
     // Object representing a single stop on the tour.
     var Stop = function (stopData) {
-        this.headline      = stopData.headline || '';          // Main text.
-        this.message       = stopData.message || '';           // Supporting copy.
-        this.$el           = $(stopData.id);                   // jQuery instance of the dom node.
-        this.positionOf$el = this.$el.offset();                // {top, left} of the $el.
-        this.sizeOf$el     = {width  : this.$el.outerWidth(),  // {width, height} of the $el.
-                              height : this.$el.outerHeight()};
-        this.centerOf$el   = {
+        // Main text.
+        this.headline = stopData.headline || '';
+        // Supporting copy.
+        this.message = stopData.message || '';
+
+        this.$el = $(stopData.id);
+
+        // {width, height} of the $el including borders.
+        this.sizeOf$el = { width: this.$el.outerWidth(), height: this.$el.outerHeight() };
+        // {top, left} of the $el relative to the document.
+        this.positionOf$el = this.$el.offset();
+        // {top, left} center point of the $el relative to the document.
+        this.centerOf$el = {
             top: (this.sizeOf$el.height / 2) + this.positionOf$el.top,
             left: (this.sizeOf$el.width / 2) + this.positionOf$el.left
-        }
+        };
     };
 
 
@@ -126,7 +130,7 @@ $(document).ready(function () {
                stop.centerOf$el.left,
                (Math.max(stop.sizeOf$el.width, stop.sizeOf$el.height) * 1.33)
             );
-       },
+        },
     };
 
 
