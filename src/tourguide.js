@@ -32,6 +32,18 @@ $(document).ready(function () {
         id       : '#three',
         headline : "Stop Three",
         message  : "I need to install little ipsum describing this stop."
+    }, {
+        id       : '#four',
+        headline : "Stop four",
+        message  : "I need to install little ipsum describing this stop."
+    }, {
+        id       : '#five',
+        headline : "Stop five",
+        message  : "I need to install little ipsum describing this stop."
+    }, {
+        id       : '#six',
+        headline : "Stop six",
+        message  : "I need to install little ipsum describing this stop."
     }];
 
 
@@ -43,19 +55,33 @@ $(document).ready(function () {
             'class': 'spotlight'
         });
         this.$el = $(this.snap.node);
-        // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
+        this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
         this.pinHole = this.snap.path(PINHOLE_PATH).attr({
-            'fill': "#222222",
-            fillOpacity: "0.75",
-            /* filter: this.filterBlur */
+            'fill': '#222222',
+            'fill-opacity': '0.75',
+            // filter: this.filterBlur
         });
+
+        this.bind();
     };
 
-    Spotlight.prototype.move = function(top, left, radius) {
+    Spotlight.prototype.bind = function () {
+        this.onMoveCompleteHandler = this.onMoveComplete.bind(this);
+        return this;
+    };
+
+    Spotlight.prototype.move = function (top, left, size) {
+        // this.$el.css({'-webkit-filter': ''});
         this.$el.stop(false, false).animate({
             'top': top - (this.$el.height() / 2),
             'left': left - (this.$el.width() / 2)
+        }, this.onMoveCompleteHandler).css({'-webkit-transform':
+            'scale(' + (Math.max(size.width, size.height) * 1.33) * 0.025 + ')'
         });
+    };
+
+    Spotlight.prototype.onMoveComplete = function (event) {
+        // this.$el.css({'-webkit-filter': 'blur(2px)'});
     };
 
 
@@ -136,7 +162,7 @@ $(document).ready(function () {
         this.spotlight.move(
            stop.centerOf$el.top,
            stop.centerOf$el.left,
-           (Math.max(stop.sizeOf$el.width, stop.sizeOf$el.height) * 1.33)
+           stop.sizeOf$el
         );
     };
 
@@ -170,6 +196,8 @@ $(document).ready(function () {
         $('.obj').each(function () {
             this.style.top = (Math.floor(Math.random() * 100) + 1) + '%';
             this.style.left = (Math.floor(Math.random() * 100) + 1) + '%';
+            this.style.height = (Math.floor(Math.random() * 100) * 2) + 'px';
+            this.style.width = (Math.floor(Math.random() * 100) * 2) + 'px';
         });
     })();
 
