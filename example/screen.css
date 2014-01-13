@@ -39,3 +39,14 @@ body {
     z-index: 10;  /* Pull the layer above the test objects */
     -webkit-transition: -webkit-transform 0.4s;
 }
+
+.plaque {
+    position: fixed;
+    max-width: 320px;
+    background: white;
+    border-radius: 4px;
+}
+
+.plaque-title {
+    font-size: 24px;
+}

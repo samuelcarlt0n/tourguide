@@ -47,6 +47,37 @@ $(document).ready(function () {
     }];
 
 
+    var PLAQUE_TEMPLATE =
+        '<div class="plaque">' +
+            '<div class="plaque-title"></div>' +
+            '<div class="plaque-message"></div>' +
+        '</div>'
+    ;
+
+    var Plaque = function (numStops) {
+        this.$el = $(PLAQUE_TEMPLATE).appendTo('body');
+        this.$headline = this.$el.find('.plaque-title');
+        this.$message = this.$el.find('.plaque-message');
+        this.numStops = numStops;
+    };
+
+    Plaque.prototype.open = function () {
+        this.$el.fadeIn(50);
+        return this;
+    };
+
+    Plaque.prototype.close = function () {
+        this.$el.fadeOut(50);
+        return this;
+    };
+
+    Plaque.prototype.update = function (headline, message, stopNumber) {
+        this.$headline.text(headline);
+        this.$message.text(message);
+        return this;
+    };
+
+
 
     // Object representing a spotlight for the tour.
     var Spotlight = function () {
@@ -70,21 +101,25 @@ $(document).ready(function () {
         return this;
     };
 
-    Spotlight.prototype.move = function (top, left, size) {
-        // this.$el.css({'-webkit-filter': ''});
-        this.$el.stop(false, false).animate({
-            'top': top - (this.$el.height() / 2),
-            'left': left - (this.$el.width() / 2)
-        }, this.onMoveCompleteHandler).css({'-webkit-transform':
-            'scale(' + (Math.max(size.width, size.height) * 1.33) * 0.025 + ')'
-        });
+    Spotlight.prototype.move = function (center, size) {
+        this.$el.stop(false, false)
+            .animate({
+                'top': center.top - (this.$el.height() / 2),
+                'left': center.left - (this.$el.width() / 2)
+            }, this.onMoveCompleteHandler);
+        this._zoom(size);
     };
+
 
     Spotlight.prototype.onMoveComplete = function (event) {
-        // this.$el.css({'-webkit-filter': 'blur(2px)'});
+        $(this).trigger('moveFinished');
     };
 
-
+    Spotlight.prototype._zoom = function (size) {
+        this.$el.css({
+            '-webkit-transform': 'scale(' + (Math.max(size.width, size.height) * 1.33) * 0.025 + ')'
+        });
+    };
 
     // Object representing a single stop on the tour.
     var Stop = function (stopData) {
@@ -120,6 +155,7 @@ $(document).ready(function () {
     Tour.prototype.schedule = function (stops) {
         this.currentStop = null;
         this.spotlight = null;
+        this.plaque = null;
 
         var _stops = [];
         stops.forEach(function (stop) {
@@ -131,12 +167,24 @@ $(document).ready(function () {
         return this;
     };
 
+    Tour.prototype.bind = function () {
+        this.onSpotlightMoveCompleteHandler = this.onSpotlightMoveComplete.bind(this);
+
+        return this;
+    };
+
+    Tour.prototype.enable = function () {
+        $(this.spotlight).on('moveFinished', this.onSpotlightMoveCompleteHandler);
+    };
+
     // Start the tour.
     Tour.prototype.start = function (firstStop) {
+        this.plaque = new Plaque(this.stops.length);
         this.spotlight = new Spotlight();
         this.currentStop = firstStop;
         this.jumpToStop(this.currentStop);
 
+        this.bind().enable();
         return this;
     };
 
@@ -158,12 +206,14 @@ $(document).ready(function () {
 
     // Jump to any stop on the tour.
     Tour.prototype.jumpToStop = function (stopIndex) {
+        this.plaque.close();
         var stop = this.stops[stopIndex];
-        this.spotlight.move(
-           stop.centerOf$el.top,
-           stop.centerOf$el.left,
-           stop.sizeOf$el
-        );
+        this.spotlight.move(stop.centerOf$el, stop.sizeOf$el);
+    };
+
+    Tour.prototype.onSpotlightMoveComplete = function () {
+        var stop = this.stops[this.currentStop];
+        this.plaque.update(stop.title, stop.message).open(stop.positionOf$el, stop.sizeOf$el);
     };
 
 
