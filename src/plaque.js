@@ -36,10 +36,10 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
     var optimalDirection = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
     switch (optimalDirection) {
-        case 'top':
-            top = (positionOfStop.top - $elHeight);
-            left = centerOfStop.left - ($elWidth / 2);
-            arrowClass = 'plaque_above';
+        case 'left':
+            top = centerOfStop.top - ($elHeight / 2);
+            left = (positionOfStop.left - $elWidth);
+            arrowClass = 'plaque_left';
             break;
 
         case 'right':
@@ -48,23 +48,23 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             arrowClass = 'plaque_right';
             break;
 
+        case 'top':
+            top = (positionOfStop.top - $elHeight);
+            left = centerOfStop.left - ($elWidth / 2);
+            arrowClass = 'plaque_above';
+            break;
+
         case 'bottom':
             top = (positionOfStop.top + sizeOfStop.height);
             left = centerOfStop.left - ($elWidth / 2);
             arrowClass = 'plaque_below';
             break;
-
-        case 'left':
-            top = centerOfStop.top - ($elHeight / 2);
-            left = (positionOfStop.left - $elWidth);
-            arrowClass = 'plaque_left';
-            break;
     }
 
-    if (top + $elHeight > $(window).innerHeight()) {
-        top -= sizeOfStop.height;
-        arrowClass = '';
-    }
+    // if (top + $elHeight > $(window).innerHeight()) {
+    //     top -= sizeOfStop.height;
+    //     arrowClass = '';
+    // }
 
     this.$el.css({
             top  : top,

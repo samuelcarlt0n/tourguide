@@ -45,10 +45,10 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
     var optimalDirection = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
     switch (optimalDirection) {
-        case 'top':
-            top = (positionOfStop.top - $elHeight);
-            left = centerOfStop.left - ($elWidth / 2);
-            arrowClass = 'plaque_above';
+        case 'left':
+            top = centerOfStop.top - ($elHeight / 2);
+            left = (positionOfStop.left - $elWidth);
+            arrowClass = 'plaque_left';
             break;
 
         case 'right':
@@ -57,23 +57,23 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             arrowClass = 'plaque_right';
             break;
 
+        case 'top':
+            top = (positionOfStop.top - $elHeight);
+            left = centerOfStop.left - ($elWidth / 2);
+            arrowClass = 'plaque_above';
+            break;
+
         case 'bottom':
             top = (positionOfStop.top + sizeOfStop.height);
             left = centerOfStop.left - ($elWidth / 2);
             arrowClass = 'plaque_below';
             break;
-
-        case 'left':
-            top = centerOfStop.top - ($elHeight / 2);
-            left = (positionOfStop.left - $elWidth);
-            arrowClass = 'plaque_left';
-            break;
     }
 
-    if (top + $elHeight > $(window).innerHeight()) {
-        top -= sizeOfStop.height;
-        arrowClass = '';
-    }
+    // if (top + $elHeight > $(window).innerHeight()) {
+    //     top -= sizeOfStop.height;
+    //     arrowClass = '';
+    // }
 
     this.$el.css({
             top  : top,
@@ -115,7 +115,7 @@ Plaque.prototype._getOptimalDirection = function (gaps) {
 };
 
 var MINIMUM_SCALE = 1.5;
-var ANIMATION_DURATION = 250;
+var ANIMATION_DURATION = 300;
 
 var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
                    'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
@@ -265,13 +265,15 @@ Tour.prototype.updateSchedule = function () {
 // Jump to any stop on the tour.
 Tour.prototype.transitionToSpot = function (stopIndex) {
     var stop = this.stops[stopIndex];
+    var spotlight = this.spotlight;
     var plaque = this.plaque;
 
     plaque.close();
-    this.spotlight.move(
-        stop.centerOf$el,
-        stop.sizeOf$el
-    ).then(function () {
+
+    $.when(
+        this._scrollToStop(stop.$el),
+        spotlight.move(stop.centerOf$el, stop.sizeOf$el)
+    ).done(function () {
         plaque.open(
             stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
             stop.headline, stop.message, stopIndex + 1
@@ -309,6 +311,19 @@ Tour.prototype.cancel = function () {
     this.spotlight.off();
     this.plaque.close();
     this.tourIsStarted = false;
+};
+
+Tour.prototype._scrollToStop = function ($stop) {
+    var d = $.Deferred();
+
+    var scrollPoint = $stop.offset().top - ($(window).innerHeight() / 2);
+    // if ($.inviewport($stop, {threshold: 0})) {
+        // d.resolve();
+    // } else {
+        $('html, body').animate({'scrollTop': scrollPoint}, 1000, 'linear', d.resolve);
+    // }
+
+    return d.promise();
 };
 
     if ( typeof module === "object" && module && typeof module.exports === "object" ) {

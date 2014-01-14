@@ -51,13 +51,15 @@ Tour.prototype.updateSchedule = function () {
 // Jump to any stop on the tour.
 Tour.prototype.transitionToSpot = function (stopIndex) {
     var stop = this.stops[stopIndex];
+    var spotlight = this.spotlight;
     var plaque = this.plaque;
 
     plaque.close();
-    this.spotlight.move(
-        stop.centerOf$el,
-        stop.sizeOf$el
-    ).then(function () {
+
+    $.when(
+        this._scrollToStop(stop.$el),
+        spotlight.move(stop.centerOf$el, stop.sizeOf$el)
+    ).done(function () {
         plaque.open(
             stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
             stop.headline, stop.message, stopIndex + 1
@@ -95,4 +97,17 @@ Tour.prototype.cancel = function () {
     this.spotlight.off();
     this.plaque.close();
     this.tourIsStarted = false;
+};
+
+Tour.prototype._scrollToStop = function ($stop) {
+    var d = $.Deferred();
+
+    var scrollPoint = $stop.offset().top - ($(window).innerHeight() / 2);
+    // if ($.inviewport($stop, {threshold: 0})) {
+        // d.resolve();
+    // } else {
+        $('html, body').animate({'scrollTop': scrollPoint}, 1000, 'linear', d.resolve);
+    // }
+
+    return d.promise();
 };
