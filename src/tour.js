@@ -32,8 +32,8 @@ Tour.prototype.schedule = function (stops) {
 // Start the tour.
 Tour.prototype.start = function (firstStop) {
     this.currentStop = firstStop;
-
     this.jumpToStop(this.currentStop);
+
     return this;
 };
 

@@ -20,11 +20,11 @@ var Plaque = function (totalStops) {
 };
 
 Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
-    // Call update first so the element is resized from new content before gettings it's size checked.
+    // Call update first so the element is resized with new content before gettings it's size checked.
     this.update(headline, message, stopNumber);
+
     var $elHeight = this.$el.outerHeight();
     var $elWidth = this.$el.outerWidth();
-
     var gaps = {
         top: positionOfStop.top - $elHeight,
         right: positionOfStop.right - $elWidth,
@@ -32,10 +32,8 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var optimalSide = this._getOptimalSide(gaps);
-
     var top, right, bottom, left;
-
+    var optimalSide = this._getOptimalSide(gaps);
     switch (optimalSide) {
         case 'top':
             top = positionOfStop.top - $elHeight + 'px';
