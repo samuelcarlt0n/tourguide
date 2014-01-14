@@ -32,8 +32,8 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var top, left;
     var optimalSide = this._getOptimalSide(gaps);
+    var top, left;
     switch (optimalSide) {
         case 'top':
             top = positionOfStop.top - $elHeight + 'px';
@@ -56,8 +56,6 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             break;
     }
 
-    // Not all properties are wanted to position any given side, this will wipe
-    // any previous position values set on the $el or apply new values.
     this.$el.css({
         top  : top,
         left : left
