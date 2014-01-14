@@ -34,16 +34,18 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
     var $elHeight = this.$el.outerHeight();
     var $elWidth = this.$el.outerWidth();
 
-    var gap = {
+    var gaps = {
         top: positionOfStop.top - $elHeight,
         right: positionOfStop.right - $elWidth,
         bottom: positionOfStop.bottom - $elHeight,
         left: positionOfStop.left - $elWidth
     };
 
+    var optimalSide = this._getOptimalSide(gaps);
+
     var top, right, bottom, left;
 
-    switch (this._getOptimalSide(gap)) {
+    switch (optimalSide) {
         case 'top':
             top = positionOfStop.top - $elHeight + 'px';
             left = centerOfStop.left - ($elWidth / 2) + 'px';
@@ -65,11 +67,13 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             break;
     }
 
+    // Not all properties are wanted to position any given side, this will wipe
+    // any previous position values set on the $el or apply new values.
     this.$el.css({
-        top: top,
-        right: right,
-        bottom: bottom,
-        left: left
+        top    : top    || '',
+        right  : right  || '',
+        bottom : bottom || '',
+        left   : left   || ''
     }).fadeIn(10);
 
     return this;
@@ -88,12 +92,12 @@ Plaque.prototype.update = function (headline, message, stopNumber) {
     return this;
 };
 
-Plaque.prototype._getOptimalSide = function (gap) {
+Plaque.prototype._getOptimalSide = function (gaps) {
     var optimalSide = null;
     var largestGap = -1;
-    for (var side in gap) {
-        if (gap.hasOwnProperty(side)) {
-            var value = gap[side];
+    for (var side in gaps) {
+        if (gaps.hasOwnProperty(side)) {
+            var value = gaps[side];
             if (value > largestGap) {
                 optimalSide = side;
                 largestGap = value;
@@ -114,11 +118,14 @@ var Spotlight = function () {
         'class': 'spotlight'
     });
     this.$el = $(this.snap.node);
-    // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
+
+    /*
+        this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
+        For the filter effect apply to pinHole -> `filter: this.filterBlur`
+     */
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
         'fill': '#222222',
-        'fill-opacity': '0.9'
-        // filter: this.filterBlur
+        'fill-opacity': '0.85'
     });
 };
 
@@ -153,8 +160,10 @@ var Stop = function (stopData) {
     this.$el = $(stopData.selector);
 
     if (this.$el.length !== 1) {
-        throw new Error("The stop '" + this.headline + " - " + this.message +
-                        "' is not present in the DOM, or more than one node was found.");
+        throw new Error(
+            "The stop '" + this.headline + " - " + this.message +
+            "' is not present in the DOM, or more than one node was found."
+        );
     }
 
     // {width, height} of the $el including borders.
@@ -188,7 +197,7 @@ var Tour = function (stops, firstStop) {
     this.schedule(stops).start(firstStop);
 };
 
-// This essentially acts a builder function for tours.
+// This essentially acts a builder for tours.
 Tour.prototype.schedule = function (stops) {
     this.currentStop = null;
 
@@ -217,19 +226,15 @@ Tour.prototype.start = function (firstStop) {
 Tour.prototype.jumpToStop = function (stopIndex) {
     var stop = this.stops[stopIndex];
     var plaque = this.plaque;
-    plaque.close();
 
+    plaque.close();
     this.spotlight.move(
         stop.centerOf$el,
         stop.sizeOf$el
     ).then(function () {
         plaque.open(
-            stop.positionOf$el,
-            stop.centerOf$el,
-            stop.sizeOf$el,
-            stop.headline,
-            stop.message,
-            stopIndex + 1
+            stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
+            stop.headline, stop.message, stopIndex + 1
         );
     });
 };
@@ -237,7 +242,7 @@ Tour.prototype.jumpToStop = function (stopIndex) {
 // Convenience method.
 // Move to the next stop on the tour.
 Tour.prototype.nextStop = function () {
-    if (this.currentStop === this.stops.length - 1) return;  // If there is no next stop.
+    if (this.currentStop === (this.stops.length - 1)) return;  // If there is no next stop.
 
     this.currentStop = this.currentStop + 1;
     this.jumpToStop(this.currentStop);
@@ -246,7 +251,7 @@ Tour.prototype.nextStop = function () {
 // Convenience method.
 // Move to the previous stop on the tour.
 Tour.prototype.previousStop = function () {
-    if ((this.currentStop - 1) === -1) return;  // If there is no previous stop.
+    if (this.currentStop === 0) return;  // If there is no previous stop.
 
     this.currentStop = this.currentStop - 1;
     this.jumpToStop(this.currentStop);

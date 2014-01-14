@@ -12,7 +12,7 @@ var Tour = function (stops, firstStop) {
     this.schedule(stops).start(firstStop);
 };
 
-// This essentially acts a builder function for tours.
+// This essentially acts a builder for tours.
 Tour.prototype.schedule = function (stops) {
     this.currentStop = null;
 
@@ -41,19 +41,15 @@ Tour.prototype.start = function (firstStop) {
 Tour.prototype.jumpToStop = function (stopIndex) {
     var stop = this.stops[stopIndex];
     var plaque = this.plaque;
-    plaque.close();
 
+    plaque.close();
     this.spotlight.move(
         stop.centerOf$el,
         stop.sizeOf$el
     ).then(function () {
         plaque.open(
-            stop.positionOf$el,
-            stop.centerOf$el,
-            stop.sizeOf$el,
-            stop.headline,
-            stop.message,
-            stopIndex + 1
+            stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
+            stop.headline, stop.message, stopIndex + 1
         );
     });
 };
@@ -61,7 +57,7 @@ Tour.prototype.jumpToStop = function (stopIndex) {
 // Convenience method.
 // Move to the next stop on the tour.
 Tour.prototype.nextStop = function () {
-    if (this.currentStop === this.stops.length - 1) return;  // If there is no next stop.
+    if (this.currentStop === (this.stops.length - 1)) return;  // If there is no next stop.
 
     this.currentStop = this.currentStop + 1;
     this.jumpToStop(this.currentStop);
@@ -70,7 +66,7 @@ Tour.prototype.nextStop = function () {
 // Convenience method.
 // Move to the previous stop on the tour.
 Tour.prototype.previousStop = function () {
-    if ((this.currentStop - 1) === -1) return;  // If there is no previous stop.
+    if (this.currentStop === 0) return;  // If there is no previous stop.
 
     this.currentStop = this.currentStop - 1;
     this.jumpToStop(this.currentStop);

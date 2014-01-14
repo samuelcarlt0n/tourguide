@@ -25,16 +25,18 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
     var $elHeight = this.$el.outerHeight();
     var $elWidth = this.$el.outerWidth();
 
-    var gap = {
+    var gaps = {
         top: positionOfStop.top - $elHeight,
         right: positionOfStop.right - $elWidth,
         bottom: positionOfStop.bottom - $elHeight,
         left: positionOfStop.left - $elWidth
     };
 
+    var optimalSide = this._getOptimalSide(gaps);
+
     var top, right, bottom, left;
 
-    switch (this._getOptimalSide(gap)) {
+    switch (optimalSide) {
         case 'top':
             top = positionOfStop.top - $elHeight + 'px';
             left = centerOfStop.left - ($elWidth / 2) + 'px';
@@ -56,11 +58,13 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             break;
     }
 
+    // Not all properties are wanted to position any given side, this will wipe
+    // any previous position values set on the $el or apply new values.
     this.$el.css({
-        top: top,
-        right: right,
-        bottom: bottom,
-        left: left
+        top    : top    || '',
+        right  : right  || '',
+        bottom : bottom || '',
+        left   : left   || ''
     }).fadeIn(10);
 
     return this;
@@ -79,12 +83,12 @@ Plaque.prototype.update = function (headline, message, stopNumber) {
     return this;
 };
 
-Plaque.prototype._getOptimalSide = function (gap) {
+Plaque.prototype._getOptimalSide = function (gaps) {
     var optimalSide = null;
     var largestGap = -1;
-    for (var side in gap) {
-        if (gap.hasOwnProperty(side)) {
-            var value = gap[side];
+    for (var side in gaps) {
+        if (gaps.hasOwnProperty(side)) {
+            var value = gaps[side];
             if (value > largestGap) {
                 optimalSide = side;
                 largestGap = value;

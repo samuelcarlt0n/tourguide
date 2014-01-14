@@ -8,8 +8,10 @@ var Stop = function (stopData) {
     this.$el = $(stopData.selector);
 
     if (this.$el.length !== 1) {
-        throw new Error("The stop '" + this.headline + " - " + this.message +
-                        "' is not present in the DOM, or more than one node was found.");
+        throw new Error(
+            "The stop '" + this.headline + " - " + this.message +
+            "' is not present in the DOM, or more than one node was found."
+        );
     }
 
     // {width, height} of the $el including borders.

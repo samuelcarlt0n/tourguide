@@ -9,11 +9,14 @@ var Spotlight = function () {
         'class': 'spotlight'
     });
     this.$el = $(this.snap.node);
-    // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
+
+    /*
+        this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
+        For the filter effect apply to pinHole -> `filter: this.filterBlur`
+     */
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
         'fill': '#222222',
-        'fill-opacity': '0.9'
-        // filter: this.filterBlur
+        'fill-opacity': '0.85'
     });
 };
 
