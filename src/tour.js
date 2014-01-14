@@ -51,14 +51,13 @@ Tour.prototype.updateSchedule = function () {
 // Jump to any stop on the tour.
 Tour.prototype.transitionToSpot = function (stopIndex) {
     var stop = this.stops[stopIndex];
-    var spotlight = this.spotlight;
     var plaque = this.plaque;
 
     plaque.close();
 
     $.when(
         this._scrollToStop(stop.$el),
-        spotlight.move(stop.centerOf$el, stop.sizeOf$el)
+        this.spotlight.move(stop.centerOf$el, stop.sizeOf$el)
     ).done(function () {
         plaque.open(
             stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
@@ -103,11 +102,7 @@ Tour.prototype._scrollToStop = function ($stop) {
     var d = $.Deferred();
 
     var scrollPoint = $stop.offset().top - ($(window).innerHeight() / 2);
-    // if ($.inviewport($stop, {threshold: 0})) {
-        // d.resolve();
-    // } else {
-        $('html, body').animate({'scrollTop': scrollPoint}, 1000, 'linear', d.resolve);
-    // }
+    $('html, body').animate({'scrollTop': scrollPoint}, 250, d.resolve);
 
     return d.promise();
 };

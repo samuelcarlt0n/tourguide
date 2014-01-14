@@ -1,51 +1,17 @@
-/* hashtag yolo */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html,
-body {
-    height: 100%;
-}
-
-body {
-    position: relative;
+html {
     overflow-x: hidden;
-    overflow-y: scroll;
-    height: 3000px;
 }
-
-.obj {
-    position: absolute;
-    z-index: 0;  /* Just being explicit. */
-    width: 50px;
-    height: 50px;
-    background-color: green;
-}
-
-.obj_rect {
-    width: 200px;
-    background-color: blue;
-}
-
-.obj_circle {
-    border-radius: 999px;
-    background-color: pink;
-}
-
 
 .spotlight {
     position: absolute;
     z-index: 10;  /* Pull the layer above the test objects */
+/*    -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(1px);*/
 }
 
 .spotlight_fuzzy {
-    -webkit-filter: blur(1px);
-    -moz-filter: blur(1px);
-    -ms-filter: blur(1px);
-    filter: blur(1px);
 }
 
 .plaque {
@@ -55,7 +21,7 @@ body {
     max-width: 550px;
     border-radius: 8px;
     background: white;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    -webkit-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.5));
 }
 
 .plaque:after {

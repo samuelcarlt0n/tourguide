@@ -79,7 +79,7 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             top  : top,
             left : left
         }).removeClass(this.arrowClass).addClass(arrowClass)
-        .fadeIn(250);
+        .fadeIn(20);
 
     this.arrowClass = arrowClass;
 
@@ -265,14 +265,13 @@ Tour.prototype.updateSchedule = function () {
 // Jump to any stop on the tour.
 Tour.prototype.transitionToSpot = function (stopIndex) {
     var stop = this.stops[stopIndex];
-    var spotlight = this.spotlight;
     var plaque = this.plaque;
 
     plaque.close();
 
     $.when(
         this._scrollToStop(stop.$el),
-        spotlight.move(stop.centerOf$el, stop.sizeOf$el)
+        this.spotlight.move(stop.centerOf$el, stop.sizeOf$el)
     ).done(function () {
         plaque.open(
             stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
@@ -317,24 +316,20 @@ Tour.prototype._scrollToStop = function ($stop) {
     var d = $.Deferred();
 
     var scrollPoint = $stop.offset().top - ($(window).innerHeight() / 2);
-    // if ($.inviewport($stop, {threshold: 0})) {
-        // d.resolve();
-    // } else {
-        $('html, body').animate({'scrollTop': scrollPoint}, 1000, 'linear', d.resolve);
-    // }
+    $('html, body').animate({'scrollTop': scrollPoint}, 250, d.resolve);
 
     return d.promise();
 };
 
-    if ( typeof module === "object" && module && typeof module.exports === "object" ) {
+    if ( typeof module === 'object' && module && typeof module.exports === 'object' ) {
         module.exports = TourGuide;
     } else {
-        if ( typeof define === "function" && define.amd ) {
-            define( "tourguide", [], function () { return tourguide; } );
+        if ( typeof define === 'function' && define.amd ) {
+            define( 'tourguide', [], function () { return tourguide; } );
         }
     }
 
-    if ( typeof window === "object" && typeof window.document === "object" ) {
+    if ( typeof window === 'object' && typeof window.document === 'object' ) {
         window.TourGuide = Tour;
     }
 })(window);

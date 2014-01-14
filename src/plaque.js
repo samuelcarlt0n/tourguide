@@ -70,7 +70,7 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             top  : top,
             left : left
         }).removeClass(this.arrowClass).addClass(arrowClass)
-        .fadeIn(250);
+        .fadeIn(20);
 
     this.arrowClass = arrowClass;
 
