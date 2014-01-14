@@ -41,8 +41,8 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var top, left;
     var optimalSide = this._getOptimalSide(gaps);
+    var top, left;
     switch (optimalSide) {
         case 'top':
             top = positionOfStop.top - $elHeight + 'px';
@@ -65,8 +65,6 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             break;
     }
 
-    // Not all properties are wanted to position any given side, this will wipe
-    // any previous position values set on the $el or apply new values.
     this.$el.css({
         top  : top,
         left : left
@@ -164,6 +162,14 @@ var Stop = function (stopData) {
         );
     }
 
+    this._updatePositionalData();
+};
+
+Stop.prototype.update = function () {
+    this._updatePositionalData();
+};
+
+Stop.prototype._updatePositionalData = function () {
     // {width, height} of the $el including borders.
     this.sizeOf$el = { width: this.$el.outerWidth(), height: this.$el.outerHeight() };
 
@@ -218,6 +224,15 @@ Tour.prototype.start = function (firstStop) {
     this.transitionToSpot(this.currentStop);
 
     return this;
+};
+
+// Update each stop's position data on the tour.
+// Call this after a window.resize event
+Tour.prototype.updateSchedule = function () {
+    this.stops.forEach(function (stop) {
+        stop.update();
+    });
+    this.transitionToSpot(this.currentStop);
 };
 
 // Jump to any stop on the tour.

@@ -14,6 +14,14 @@ var Stop = function (stopData) {
         );
     }
 
+    this._updatePositionalData();
+};
+
+Stop.prototype.update = function () {
+    this._updatePositionalData();
+};
+
+Stop.prototype._updatePositionalData = function () {
     // {width, height} of the $el including borders.
     this.sizeOf$el = { width: this.$el.outerWidth(), height: this.$el.outerHeight() };
 

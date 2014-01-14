@@ -37,6 +37,15 @@ Tour.prototype.start = function (firstStop) {
     return this;
 };
 
+// Update each stop's position data on the tour.
+// Call this after a window.resize event
+Tour.prototype.updateSchedule = function () {
+    this.stops.forEach(function (stop) {
+        stop.update();
+    });
+    this.transitionToSpot(this.currentStop);
+};
+
 // Jump to any stop on the tour.
 Tour.prototype.transitionToSpot = function (stopIndex) {
     var stop = this.stops[stopIndex];
