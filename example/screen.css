@@ -44,12 +44,12 @@ body {
     z-index: 100;
     padding: 10px;
     max-width: 550px;
-    border-radius: 4px;
+    border-radius: 8px;
     background: white;
-    -webkit-filter: drop-shadow(0 0 10px black);
-    -moz-filter: drop-shadow(0 0 10px black);
-    -ms-filter: drop-shadow(0 0 10px black);
-    filter: drop-shadow(0 0 10px black);
+    -webkit-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
+    -moz-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
+    -ms-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
+    filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
 }
 
 .plaque:after {
@@ -73,7 +73,7 @@ body {
 .plaque_left:after {
     top: 50%;
     right: -10px;
-    margin-top: -5px;
+    margin-top: -10px;
     border-width: 10px 0 10px 10px;
     border-color: transparent transparent transparent #ffffff;
 }
@@ -91,7 +91,7 @@ body {
 .plaque_right:after {
     top: 50%;
     left: -10px;
-    margin-top: -5px;
+    margin-top: -10px;
     border-width: 10px 10px 10px 0;
     border-color: transparent #ffffff transparent transparent;
 }
