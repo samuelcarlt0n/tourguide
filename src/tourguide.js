@@ -51,18 +51,63 @@ $(document).ready(function () {
         '<div class="plaque">' +
             '<div class="plaque-title"></div>' +
             '<div class="plaque-message"></div>' +
+            '<span class="plaque-stopNumber"></span> of ' +
+            '<span class="plaque-totalStops"></span>' +
         '</div>'
     ;
 
-    var Plaque = function (numStops) {
+    var Plaque = function (totalStops) {
         this.$el = $(PLAQUE_TEMPLATE).appendTo('body');
         this.$headline = this.$el.find('.plaque-title');
         this.$message = this.$el.find('.plaque-message');
-        this.numStops = numStops;
+        this.$stopNumber = this.$el.find('.plaque-stopNumber');
+        this.$totalStops = this.$el.find('.plaque-totalStops').text(totalStops);
     };
 
-    Plaque.prototype.open = function () {
-        this.$el.fadeIn(50);
+    Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
+        // Call update first so the element is resized from new content before gettings it's size checked.
+        this.update(headline, message, stopNumber);
+        var $elHeight = this.$el.outerHeight();
+        var $elWidth = this.$el.outerWidth();
+
+        var gap = {
+            top: positionOfStop.top - $elHeight,
+            right: positionOfStop.right - $elWidth,
+            bottom: positionOfStop.bottom - $elHeight,
+            left: positionOfStop.left - $elWidth
+        };
+
+        var top = right = bottom = left = '';
+
+        switch (this._getOptimalSide(gap)) {
+            case 'top':
+                top = positionOfStop.top - $elHeight + 'px';
+                left = centerOfStop.left - ($elWidth / 2) + 'px';
+                break;
+
+            case 'right':
+                top = centerOfStop.top - ($elHeight / 2) + 'px';
+                left = positionOfStop.left + sizeOfStop.width + 'px';
+                break;
+
+            case 'bottom':
+                bottom = positionOfStop.bottom + $elHeight + 'px';
+                left = centerOfStop.left - ($elWidth / 2) + 'px';
+                break;
+
+            case 'left':
+                top = centerOfStop.top - ($elHeight / 2) + 'px';
+                left = positionOfStop.left - $elWidth + 'px';
+                break;
+        }
+
+        this.$el.css({
+            top: top,
+            right: right,
+            bottom: bottom,
+            left: left
+        }).fadeIn(10);
+
         return this;
     };
 
@@ -74,14 +119,31 @@ $(document).ready(function () {
     Plaque.prototype.update = function (headline, message, stopNumber) {
         this.$headline.text(headline);
         this.$message.text(message);
+        this.$stopNumber.text(stopNumber);
+
         return this;
+    };
+
+    Plaque.prototype._getOptimalSide = function (gap) {
+        var optimalSide = null;
+        var largestGap = -1;
+        for (var side in gap) {
+            if (gap.hasOwnProperty(side)) {
+                var value = gap[side];
+                if (value > largestGap) {
+                    optimalSide = side;
+                    largestGap = value;
+                }
+            }
+        }
+        return optimalSide;
     };
 
 
 
     // Object representing a spotlight for the tour.
     var Spotlight = function () {
-        this.snap = Snap(2000, 2000).attr({
+        this.snap = window.Snap(2000, 2000).attr({
             'id': 'spotlight',
             'class': 'spotlight'
         });
@@ -89,37 +151,33 @@ $(document).ready(function () {
         this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
         this.pinHole = this.snap.path(PINHOLE_PATH).attr({
             'fill': '#222222',
-            'fill-opacity': '0.75',
+            'fill-opacity': '0.9'
             // filter: this.filterBlur
         });
-
-        this.bind();
-    };
-
-    Spotlight.prototype.bind = function () {
-        this.onMoveCompleteHandler = this.onMoveComplete.bind(this);
-        return this;
     };
 
     Spotlight.prototype.move = function (center, size) {
-        this.$el.stop(false, false)
+        var d = $.Deferred();
+
+        this.$el
+            .stop(false, false)
             .animate({
                 'top': center.top - (this.$el.height() / 2),
                 'left': center.left - (this.$el.width() / 2)
-            }, this.onMoveCompleteHandler);
+            }, 300, 'swing', d.resolve);
         this._zoom(size);
+
+        return d.promise();
     };
 
-
-    Spotlight.prototype.onMoveComplete = function (event) {
-        $(this).trigger('moveFinished');
-    };
-
+    // Should not be called directly.
     Spotlight.prototype._zoom = function (size) {
         this.$el.css({
-            '-webkit-transform': 'scale(' + (Math.max(size.width, size.height) * 1.33) * 0.025 + ')'
+            '-webkit-transform': 'scale(' + (Math.max(size.width, size.height) * (0.033)) + ')'
         });
     };
+
+
 
     // Object representing a single stop on the tour.
     var Stop = function (stopData) {
@@ -132,8 +190,14 @@ $(document).ready(function () {
 
         // {width, height} of the $el including borders.
         this.sizeOf$el = { width: this.$el.outerWidth(), height: this.$el.outerHeight() };
-        // {top, left} of the $el relative to the document.
+
+        // {top, right, bottom, left} of the $el relative to the document.
         this.positionOf$el = this.$el.offset();
+        this.positionOf$el.top = parseInt(this.positionOf$el.top, 10);
+        this.positionOf$el.right = parseInt($(document).width() - (this.positionOf$el.left + this.sizeOf$el.width), 10);
+        this.positionOf$el.bottom = parseInt($(document).height() - (this.positionOf$el.top + this.sizeOf$el.height), 10);
+        this.positionOf$el.left = parseInt(this.positionOf$el.left, 10);
+
         // {top, left} center point of the $el relative to the document.
         this.centerOf$el = {
             top: (this.sizeOf$el.height / 2) + this.positionOf$el.top,
@@ -154,8 +218,6 @@ $(document).ready(function () {
     // This essentially acts a builder function for tours.
     Tour.prototype.schedule = function (stops) {
         this.currentStop = null;
-        this.spotlight = null;
-        this.plaque = null;
 
         var _stops = [];
         stops.forEach(function (stop) {
@@ -164,30 +226,42 @@ $(document).ready(function () {
         });
         this.stops = _stops;
 
-        return this;
-    };
-
-    Tour.prototype.bind = function () {
-        this.onSpotlightMoveCompleteHandler = this.onSpotlightMoveComplete.bind(this);
+        this.plaque = new Plaque(this.stops.length);
+        this.spotlight = new Spotlight();
 
         return this;
-    };
-
-    Tour.prototype.enable = function () {
-        $(this.spotlight).on('moveFinished', this.onSpotlightMoveCompleteHandler);
     };
 
     // Start the tour.
     Tour.prototype.start = function (firstStop) {
-        this.plaque = new Plaque(this.stops.length);
-        this.spotlight = new Spotlight();
         this.currentStop = firstStop;
-        this.jumpToStop(this.currentStop);
 
-        this.bind().enable();
+        this.jumpToStop(this.currentStop);
         return this;
     };
 
+    // Jump to any stop on the tour.
+    Tour.prototype.jumpToStop = function (stopIndex) {
+        var stop = this.stops[stopIndex];
+        var plaque = this.plaque;
+        plaque.close();
+
+        this.spotlight.move(
+            stop.centerOf$el,
+            stop.sizeOf$el
+        ).then(function () {
+            plaque.open(
+                stop.positionOf$el,
+                stop.centerOf$el,
+                stop.sizeOf$el,
+                stop.headline,
+                stop.message,
+                stopIndex + 1
+            );
+        });
+    };
+
+    // Convenience method.
     // Move to the next stop on the tour.
     Tour.prototype.nextStop = function () {
         if (this.currentStop === this.stops.length - 1) return;  // If there is no next stop.
@@ -196,24 +270,13 @@ $(document).ready(function () {
         this.jumpToStop(this.currentStop);
     };
 
+    // Convenience method.
     // Move to the previous stop on the tour.
     Tour.prototype.previousStop = function () {
-        if (this.currentStop - 1 === -1) return;  // If there is no previous stop.
+        if ((this.currentStop - 1) === -1) return;  // If there is no previous stop.
 
         this.currentStop = this.currentStop - 1;
         this.jumpToStop(this.currentStop);
-    };
-
-    // Jump to any stop on the tour.
-    Tour.prototype.jumpToStop = function (stopIndex) {
-        this.plaque.close();
-        var stop = this.stops[stopIndex];
-        this.spotlight.move(stop.centerOf$el, stop.sizeOf$el);
-    };
-
-    Tour.prototype.onSpotlightMoveComplete = function () {
-        var stop = this.stops[this.currentStop];
-        this.plaque.update(stop.title, stop.message).open(stop.positionOf$el, stop.sizeOf$el);
     };
 
 

@@ -42,9 +42,13 @@ body {
 
 .plaque {
     position: fixed;
-    max-width: 320px;
+    z-index: 100;
+    max-width: 550px;
     background: white;
     border-radius: 4px;
+    padding: 10px;
+    border: 1px solid black;
+    box-shadow: 0 0 10px black;
 }
 
 .plaque-title {
