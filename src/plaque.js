@@ -17,12 +17,12 @@ var Plaque = function (totalStops) {
     this.$message = this.$el.find('.js-plaque-message');
     this.$stopNumber = this.$el.find('.js-plaque-stopNumber');
     this.$totalStops = this.$el.find('.js-plaque-totalStops').text(totalStops);
-    this.arrowClass = '';
+    this.arrowClass = '';  // This class will be applied to the element for the css pointer arrow.
 };
 
 Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
     // Call update first so the element is resized with new content before gettings it's size checked.
-    this.update(headline, message, stopNumber);
+    this.updateContent(headline, message, stopNumber);
 
     var $elHeight = this.$el.outerHeight();
     var $elWidth = this.$el.outerWidth();
@@ -64,7 +64,7 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
     this.$el.css({
         top  : top,
         left : left
-    }).removeClass(this.arrowClass).addClass(arrowClass).fadeIn(10);
+    }).removeClass(this.arrowClass).addClass(arrowClass).fadeIn(250);
 
     this.arrowClass = arrowClass;
 
@@ -76,7 +76,7 @@ Plaque.prototype.close = function () {
     return this;
 };
 
-Plaque.prototype.update = function (headline, message, stopNumber) {
+Plaque.prototype.updateContent = function (headline, message, stopNumber) {
     this.$headline.text(headline);
     this.$message.text(message);
     this.$stopNumber.text(stopNumber);

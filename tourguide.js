@@ -73,7 +73,7 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
     this.$el.css({
         top  : top,
         left : left
-    }).removeClass(this.arrowClass).addClass(arrowClass).fadeIn(10);
+    }).removeClass(this.arrowClass).addClass(arrowClass).fadeIn(250);
 
     this.arrowClass = arrowClass;
 
@@ -144,6 +144,22 @@ Spotlight.prototype.move = function (center, size) {
         }, ANIMATION_DURATION, 'snap', d.resolve);
 
     return d.promise();
+};
+
+Spotlight.prototype.on = function () {
+    var d = $.Deferred();
+    // Add the svg node and then fade in
+    this.$el
+        .css({'opacity': 0})
+        .appendTo('body')
+        .animate({'opacity': 1}, 750, 'swing', d.resolve);
+
+    return d.promise();
+};
+
+Spotlight.prototype.off = function () {
+    // Fadeout the svg node and then detach
+    this.$el.transit({'opacity': 0}, 250, 'snap', this.$el.detach);
 };
 
 // Should not be called directly.
@@ -230,6 +246,8 @@ Tour.prototype.start = function (firstStop) {
     this.currentStop = firstStop;
     this.transitionToSpot(this.currentStop);
 
+    this.tourIsStarted = true;
+
     return this;
 };
 
@@ -275,6 +293,20 @@ Tour.prototype.previousStop = function () {
 
     this.currentStop = this.currentStop - 1;
     this.transitionToSpot(this.currentStop);
+};
+
+Tour.prototype.resume = function () {
+    if (this.tourIsStarted) return this;
+    this.updateSchedule();
+    this.spotlight.on();
+    this.tourIsStarted = true;
+};
+
+Tour.prototype.cancel = function () {
+    if (!this.tourIsStarted) return this;
+    this.spotlight.off();
+    this.plaque.close();
+    this.tourIsStarted = false;
 };
 
     if ( typeof module === "object" && module && typeof module.exports === "object" ) {

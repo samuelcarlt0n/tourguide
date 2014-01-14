@@ -34,6 +34,8 @@ Tour.prototype.start = function (firstStop) {
     this.currentStop = firstStop;
     this.transitionToSpot(this.currentStop);
 
+    this.tourIsStarted = true;
+
     return this;
 };
 
@@ -79,4 +81,18 @@ Tour.prototype.previousStop = function () {
 
     this.currentStop = this.currentStop - 1;
     this.transitionToSpot(this.currentStop);
+};
+
+Tour.prototype.resume = function () {
+    if (this.tourIsStarted) return this;
+    this.updateSchedule();
+    this.spotlight.on();
+    this.tourIsStarted = true;
+};
+
+Tour.prototype.cancel = function () {
+    if (!this.tourIsStarted) return this;
+    this.spotlight.off();
+    this.plaque.close();
+    this.tourIsStarted = false;
 };
