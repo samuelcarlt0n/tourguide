@@ -38,6 +38,9 @@ body {
     position: relative;
     z-index: 10;  /* Pull the layer above the test objects */
     -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(1px);
 }
 
 .plaque {
