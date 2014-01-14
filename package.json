@@ -1,0 +1,13 @@
+{
+  "name": "tourguide",
+  "author": "Sam Carlton",
+  "version": "0.1.0",
+  "license": "",
+  "private": false,
+  "devDependencies": {
+    "load-grunt-config": "git://github.com/Pradeek/load-grunt-config.git",
+    "load-grunt-tasks": "~0.2.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt": "~0.4.2"
+  }
+}
