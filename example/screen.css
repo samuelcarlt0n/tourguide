@@ -38,9 +38,9 @@ body {
     position: relative;
     z-index: 10;  /* Pull the layer above the test objects */
     -webkit-filter: blur(1px);
-    -moz-filter: blur(1px);
     -ms-filter: blur(1px);
     filter: blur(1px);
+    -moz-filter: blur(1px);
 }
 
 .plaque {
@@ -50,17 +50,14 @@ body {
     max-width: 550px;
     border-radius: 8px;
     background: white;
-    -webkit-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
-    -moz-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
-    -ms-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
-    filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .plaque:after {
     position: absolute;
-    width: 0px;
-    height: 0px;
-    border-style: solid;
+    width: 0;
+    height: 0;
+
     content: " ";
 }
 
@@ -70,6 +67,7 @@ body {
     left: 50%;
     margin-left: -10px;
     border-width: 0 10px 10px 10px;
+    border-style: solid;
     border-color: transparent transparent #ffffff transparent;
 }
 
@@ -79,6 +77,7 @@ body {
     right: -10px;
     margin-top: -10px;
     border-width: 10px 0 10px 10px;
+    border-style: solid;
     border-color: transparent transparent transparent #ffffff;
 }
 
@@ -88,6 +87,7 @@ body {
     left: 50%;
     margin-left: -10px;
     border-width: 10px 10px 0 10px;
+    border-style: solid;
     border-color: #ffffff transparent transparent transparent;
 }
 
@@ -97,7 +97,17 @@ body {
     left: -10px;
     margin-top: -10px;
     border-width: 10px 10px 10px 0;
+    border-style: solid;
     border-color: transparent #ffffff transparent transparent;
+}
+
+/* Arrow points SW. */
+.plaque_ne:after {
+    bottom: 0;
+    left: 0;
+    border-width: 10px 0 0 10px;
+    border-color: transparent transparent transparent #ffffff;
+
 }
 
 .plaque-title {

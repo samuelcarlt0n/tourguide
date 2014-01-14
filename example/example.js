@@ -74,8 +74,11 @@ $(document).ready(function () {
         $('.obj').each(function () {
             this.style.top = (Math.floor(Math.random() * 100) + 1) + '%';
             this.style.left = (Math.floor(Math.random() * 100) + 1) + '%';
-            this.style.height = (Math.floor(Math.random() * 100) * 2) + 'px';
-            this.style.width = (Math.floor(Math.random() * 100) * 2) + 'px';
+            var minSize = 50;
+            var w = (Math.floor(Math.random() * 100) * 2);
+            var h = (Math.floor(Math.random() * 100) * 2);
+            this.style.width = w > minSize ? w : minSize + 'px';
+            this.style.height = h > minSize ? h : minSize + 'px';
         });
     })();
 

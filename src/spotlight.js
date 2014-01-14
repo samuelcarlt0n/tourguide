@@ -17,8 +17,8 @@ var Spotlight = function () {
     // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
     // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
-        'fill': '#222222',
-        'fill-opacity': '0.8'
+        'fill': '#333333',
+        'fill-opacity': '0.9'
     });
 };
 

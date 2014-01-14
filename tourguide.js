@@ -42,38 +42,44 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var optimalSide = this._getOptimalDirection(gaps);
+    var optimalDirection = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
-    switch (optimalSide) {
+    switch (optimalDirection) {
         case 'top':
-            top = positionOfStop.top - $elHeight + 'px';
-            left = centerOfStop.left - ($elWidth / 2) + 'px';
+            top = (positionOfStop.top - $elHeight);
+            left = centerOfStop.left - ($elWidth / 2);
             arrowClass = 'plaque_above';
             break;
 
         case 'right':
-            top = centerOfStop.top - ($elHeight / 2) + 'px';
-            left = positionOfStop.left + sizeOfStop.width + 'px';
+            top = centerOfStop.top - ($elHeight / 2);
+            left = (positionOfStop.left + sizeOfStop.width);
             arrowClass = 'plaque_right';
             break;
 
         case 'bottom':
-            top = positionOfStop.top + sizeOfStop.height + 'px';
-            left = centerOfStop.left - ($elWidth / 2) + 'px';
+            top = (positionOfStop.top + sizeOfStop.height);
+            left = centerOfStop.left - ($elWidth / 2);
             arrowClass = 'plaque_below';
             break;
 
         case 'left':
-            top = centerOfStop.top - ($elHeight / 2) + 'px';
-            left = positionOfStop.left - $elWidth + 'px';
+            top = centerOfStop.top - ($elHeight / 2);
+            left = (positionOfStop.left - $elWidth);
             arrowClass = 'plaque_left';
             break;
     }
 
+    if (top + $elHeight > $(window).innerHeight()) {
+        top -= sizeOfStop.height;
+        arrowClass = '';
+    }
+
     this.$el.css({
-        top  : top,
-        left : left
-    }).removeClass(this.arrowClass).addClass(arrowClass).fadeIn(250);
+            top  : top,
+            left : left
+        }).removeClass(this.arrowClass).addClass(arrowClass)
+        .fadeIn(250);
 
     this.arrowClass = arrowClass;
 
@@ -127,8 +133,8 @@ var Spotlight = function () {
     // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
     // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
-        'fill': '#222222',
-        'fill-opacity': '0.8'
+        'fill': '#333333',
+        'fill-opacity': '0.9'
     });
 };
 
