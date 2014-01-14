@@ -26,12 +26,12 @@ var Plaque = function (totalStops) {
     this.$message = this.$el.find('.js-plaque-message');
     this.$stopNumber = this.$el.find('.js-plaque-stopNumber');
     this.$totalStops = this.$el.find('.js-plaque-totalStops').text(totalStops);
-    this.arrowClass = '';
+    this.arrowClass = '';  // This class will be applied to the element for the css pointer arrow.
 };
 
 Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
     // Call update first so the element is resized with new content before gettings it's size checked.
-    this.update(headline, message, stopNumber);
+    this.updateContent(headline, message, stopNumber);
 
     var $elHeight = this.$el.outerHeight();
     var $elWidth = this.$el.outerWidth();
@@ -42,7 +42,7 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var optimalSide = this._getOptimalSide(gaps);
+    var optimalSide = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
     switch (optimalSide) {
         case 'top':
@@ -85,7 +85,7 @@ Plaque.prototype.close = function () {
     return this;
 };
 
-Plaque.prototype.update = function (headline, message, stopNumber) {
+Plaque.prototype.updateContent = function (headline, message, stopNumber) {
     this.$headline.text(headline);
     this.$message.text(message);
     this.$stopNumber.text(stopNumber);
@@ -93,19 +93,19 @@ Plaque.prototype.update = function (headline, message, stopNumber) {
     return this;
 };
 
-Plaque.prototype._getOptimalSide = function (gaps) {
-    var optimalSide = null;
+Plaque.prototype._getOptimalDirection = function (gaps) {
+    var optimalDirection = null;
     var largestGap = -1;
-    for (var side in gaps) {
-        if (gaps.hasOwnProperty(side)) {
-            var value = gaps[side];
+    for (var direction in gaps) {
+        if (gaps.hasOwnProperty(direction)) {
+            var value = gaps[direction];
             if (value > largestGap) {
-                optimalSide = side;
+                optimalDirection = direction;
                 largestGap = value;
             }
         }
     }
-    return optimalSide;
+    return optimalDirection;
 };
 
 var MINIMUM_SCALE = 1.5;
@@ -116,13 +116,13 @@ var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
 
 
 // Object representing a spotlight for the tour.
+// Constructor
 var Spotlight = function () {
     this.snap = window.Snap(2000, 2000).attr({
         'id': 'spotlight',
         'class': 'spotlight'
     });
     this.$el = $(this.snap.node);
-
 
     // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
     // For the filter effect apply to pinHole -> `filter: this.filterBlur`
@@ -147,14 +147,11 @@ Spotlight.prototype.move = function (center, size) {
 };
 
 Spotlight.prototype.on = function () {
-    var d = $.Deferred();
     // Add the svg node and then fade in
     this.$el
-        .css({'opacity': 0})
+        .css({'opacity': 0})  // Ensure it is transparent when re-added to the DOM.
         .appendTo('body')
-        .animate({'opacity': 1}, 750, 'swing', d.resolve);
-
-    return d.promise();
+        .animate({'opacity': 1}, 750);  // $.animate needs to be used here - $.transit refused to animate.
 };
 
 Spotlight.prototype.off = function () {
@@ -162,7 +159,6 @@ Spotlight.prototype.off = function () {
     this.$el.transit({'opacity': 0}, 250, 'snap', this.$el.detach);
 };
 
-// Should not be called directly.
 Spotlight.prototype._zoom = function (size) {
     var scale = Math.max(size.width, size.height) * (0.033);
     scale = scale < MINIMUM_SCALE ? MINIMUM_SCALE : scale;

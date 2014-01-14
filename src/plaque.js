@@ -33,7 +33,7 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var optimalSide = this._getOptimalSide(gaps);
+    var optimalSide = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
     switch (optimalSide) {
         case 'top':
@@ -84,17 +84,17 @@ Plaque.prototype.updateContent = function (headline, message, stopNumber) {
     return this;
 };
 
-Plaque.prototype._getOptimalSide = function (gaps) {
-    var optimalSide = null;
+Plaque.prototype._getOptimalDirection = function (gaps) {
+    var optimalDirection = null;
     var largestGap = -1;
-    for (var side in gaps) {
-        if (gaps.hasOwnProperty(side)) {
-            var value = gaps[side];
+    for (var direction in gaps) {
+        if (gaps.hasOwnProperty(direction)) {
+            var value = gaps[direction];
             if (value > largestGap) {
-                optimalSide = side;
+                optimalDirection = direction;
                 largestGap = value;
             }
         }
     }
-    return optimalSide;
+    return optimalDirection;
 };
