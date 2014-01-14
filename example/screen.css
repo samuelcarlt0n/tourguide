@@ -7,8 +7,8 @@
 
 html,
 body {
-    height: 100%;
     overflow: hidden;
+    height: 100%;
 }
 
 body {
@@ -42,12 +42,58 @@ body {
 .plaque {
     position: fixed;
     z-index: 100;
-    max-width: 550px;
-    background: white;
-    border-radius: 4px;
     padding: 10px;
-    border: 1px solid black;
-    box-shadow: 0 0 10px black;
+    max-width: 550px;
+    border-radius: 4px;
+    background: white;
+    -webkit-filter: drop-shadow(0 0 10px black);
+    -moz-filter: drop-shadow(0 0 10px black);
+    -ms-filter: drop-shadow(0 0 10px black);
+    filter: drop-shadow(0 0 10px black);
+}
+
+.plaque:after {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    content: " ";
+}
+
+/* Arrow points up. */
+.plaque_below:after {
+    top: -10px;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent #ffffff transparent;
+}
+
+/* Arrow points right */
+.plaque_left:after {
+    top: 50%;
+    right: -10px;
+    margin-top: -5px;
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent #ffffff;
+}
+
+/* Arrow down up. */
+.plaque_above:after {
+    bottom: -10px;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 10px 10px 0 10px;
+    border-color: #ffffff transparent transparent transparent;
+}
+
+/* Arrow points left. */
+.plaque_right:after {
+    top: 50%;
+    left: -10px;
+    margin-top: -5px;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #ffffff transparent transparent;
 }
 
 .plaque-title {

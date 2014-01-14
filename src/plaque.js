@@ -17,6 +17,7 @@ var Plaque = function (totalStops) {
     this.$message = this.$el.find('.js-plaque-message');
     this.$stopNumber = this.$el.find('.js-plaque-stopNumber');
     this.$totalStops = this.$el.find('.js-plaque-totalStops').text(totalStops);
+    this.arrowClass = '';
 };
 
 Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
@@ -33,33 +34,39 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
     };
 
     var optimalSide = this._getOptimalSide(gaps);
-    var top, left;
+    var top, left, arrowClass;
     switch (optimalSide) {
         case 'top':
             top = positionOfStop.top - $elHeight + 'px';
             left = centerOfStop.left - ($elWidth / 2) + 'px';
+            arrowClass = 'plaque_above';
             break;
 
         case 'right':
             top = centerOfStop.top - ($elHeight / 2) + 'px';
             left = positionOfStop.left + sizeOfStop.width + 'px';
+            arrowClass = 'plaque_right';
             break;
 
         case 'bottom':
             top = positionOfStop.top + sizeOfStop.height + 'px';
             left = centerOfStop.left - ($elWidth / 2) + 'px';
+            arrowClass = 'plaque_below';
             break;
 
         case 'left':
             top = centerOfStop.top - ($elHeight / 2) + 'px';
             left = positionOfStop.left - $elWidth + 'px';
+            arrowClass = 'plaque_left';
             break;
     }
 
     this.$el.css({
         top  : top,
         left : left
-    }).fadeIn(10);
+    }).removeClass(this.arrowClass).addClass(arrowClass).fadeIn(10);
+
+    this.arrowClass = arrowClass;
 
     return this;
 };
