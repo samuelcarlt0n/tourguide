@@ -46,7 +46,7 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             break;
 
         case 'bottom':
-            bottom = positionOfStop.bottom + $elHeight + 'px';
+            top = positionOfStop.top + sizeOfStop.height + 'px';
             left = centerOfStop.left - ($elWidth / 2) + 'px';
             break;
 

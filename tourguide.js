@@ -1,7 +1,6 @@
 (function (window) {
     'use strict';
 
-    // Polyfill String.contains()
     if (!String.prototype.startsWith) {
         String.prototype.startsWith = function (str) {
             return this.slice(0, str.length) == str;
@@ -30,11 +29,11 @@ var Plaque = function (totalStops) {
 };
 
 Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
-    // Call update first so the element is resized from new content before gettings it's size checked.
+    // Call update first so the element is resized with new content before gettings it's size checked.
     this.update(headline, message, stopNumber);
+
     var $elHeight = this.$el.outerHeight();
     var $elWidth = this.$el.outerWidth();
-
     var gaps = {
         top: positionOfStop.top - $elHeight,
         right: positionOfStop.right - $elWidth,
@@ -42,10 +41,8 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var optimalSide = this._getOptimalSide(gaps);
-
     var top, right, bottom, left;
-
+    var optimalSide = this._getOptimalSide(gaps);
     switch (optimalSide) {
         case 'top':
             top = positionOfStop.top - $elHeight + 'px';
@@ -58,7 +55,7 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
             break;
 
         case 'bottom':
-            bottom = positionOfStop.bottom + $elHeight + 'px';
+            top = positionOfStop.top + sizeOfStop.height + 'px';
             left = centerOfStop.left - ($elWidth / 2) + 'px';
             break;
 
@@ -108,6 +105,9 @@ Plaque.prototype._getOptimalSide = function (gaps) {
     return optimalSide;
 };
 
+var MINIMUM_SCALE = 1.5;
+var ANIMATION_DURATION = 250;
+
 var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
                    'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
 
@@ -120,10 +120,9 @@ var Spotlight = function () {
     });
     this.$el = $(this.snap.node);
 
-    /*
-        this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
-        For the filter effect apply to pinHole -> `filter: this.filterBlur`
-     */
+
+    // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
+    // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
         'fill': '#222222',
         'fill-opacity': '0.85'
@@ -133,22 +132,22 @@ var Spotlight = function () {
 Spotlight.prototype.move = function (center, size) {
     var d = $.Deferred();
 
+    this._zoom(size);
     this.$el
         .stop(false, false)
-        .animate({
+        .transition({
             'top': center.top - (this.$el.height() / 2),
             'left': center.left - (this.$el.width() / 2)
-        }, 300, 'swing', d.resolve);
-    this._zoom(size);
+        }, ANIMATION_DURATION, 'snap', d.resolve);
 
     return d.promise();
 };
 
 // Should not be called directly.
 Spotlight.prototype._zoom = function (size) {
-    this.$el.css({
-        '-webkit-transform': 'scale(' + (Math.max(size.width, size.height) * (0.033)) + ')'
-    });
+    var scale = Math.max(size.width, size.height) * (0.033);
+    scale = scale < MINIMUM_SCALE ? MINIMUM_SCALE : scale;
+    this.$el.transition({'scale': scale}, ANIMATION_DURATION, 'snap');
 };
 
 // Object representing a single stop on the tour.
@@ -218,13 +217,13 @@ Tour.prototype.schedule = function (stops) {
 // Start the tour.
 Tour.prototype.start = function (firstStop) {
     this.currentStop = firstStop;
+    this.transitionToSpot(this.currentStop);
 
-    this.jumpToStop(this.currentStop);
     return this;
 };
 
 // Jump to any stop on the tour.
-Tour.prototype.jumpToStop = function (stopIndex) {
+Tour.prototype.transitionToSpot = function (stopIndex) {
     var stop = this.stops[stopIndex];
     var plaque = this.plaque;
 
@@ -246,7 +245,7 @@ Tour.prototype.nextStop = function () {
     if (this.currentStop === (this.stops.length - 1)) return;  // If there is no next stop.
 
     this.currentStop = this.currentStop + 1;
-    this.jumpToStop(this.currentStop);
+    this.transitionToSpot(this.currentStop);
 };
 
 // Convenience method.
@@ -255,7 +254,7 @@ Tour.prototype.previousStop = function () {
     if (this.currentStop === 0) return;  // If there is no previous stop.
 
     this.currentStop = this.currentStop - 1;
-    this.jumpToStop(this.currentStop);
+    this.transitionToSpot(this.currentStop);
 };
 
     if ( typeof module === "object" && module && typeof module.exports === "object" ) {

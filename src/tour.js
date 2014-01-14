@@ -32,13 +32,13 @@ Tour.prototype.schedule = function (stops) {
 // Start the tour.
 Tour.prototype.start = function (firstStop) {
     this.currentStop = firstStop;
-    this.jumpToStop(this.currentStop);
+    this.transitionToSpot(this.currentStop);
 
     return this;
 };
 
 // Jump to any stop on the tour.
-Tour.prototype.jumpToStop = function (stopIndex) {
+Tour.prototype.transitionToSpot = function (stopIndex) {
     var stop = this.stops[stopIndex];
     var plaque = this.plaque;
 
@@ -60,7 +60,7 @@ Tour.prototype.nextStop = function () {
     if (this.currentStop === (this.stops.length - 1)) return;  // If there is no next stop.
 
     this.currentStop = this.currentStop + 1;
-    this.jumpToStop(this.currentStop);
+    this.transitionToSpot(this.currentStop);
 };
 
 // Convenience method.
@@ -69,5 +69,5 @@ Tour.prototype.previousStop = function () {
     if (this.currentStop === 0) return;  // If there is no previous stop.
 
     this.currentStop = this.currentStop - 1;
-    this.jumpToStop(this.currentStop);
+    this.transitionToSpot(this.currentStop);
 };

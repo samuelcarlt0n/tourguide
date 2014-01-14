@@ -37,7 +37,6 @@ body {
 .spotlight {
     position: relative;
     z-index: 10;  /* Pull the layer above the test objects */
-    -webkit-transition: -webkit-transform 0.4s;
 }
 
 .plaque {
