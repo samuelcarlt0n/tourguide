@@ -24,7 +24,7 @@ var Spotlight = function () {
     });
 };
 
-Spotlight.prototype.move = function (center, size) {
+Spotlight.prototype.move = function (top, left, size) {
     var d = $.Deferred();
 
     var scale = Math.max(size.width, size.height) * (0.025);

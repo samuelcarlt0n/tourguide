@@ -37,7 +37,7 @@ Tour.prototype.schedule = function (stops) {
 // Start the tour.
 Tour.prototype.start = function (firstStop) {
     this.currentStop = firstStop;
-    this.transitionToSpot(this.currentStop);
+    this.transitionToStop(this.currentStop);
 
     this.tourIsStarted = true;
 
@@ -47,18 +47,20 @@ Tour.prototype.start = function (firstStop) {
 // Update each stop's position data on the tour.
 // Call this after a window.resize event
 Tour.prototype.updateSchedule = function () {
-    this.stops.forEach(function (stop) {
-        stop.update();
-    });
-    this.transitionToSpot(this.currentStop);
+    this.transitionToStop(this.currentStop);
 };
 
 // Jump to any stop on the tour.
-Tour.prototype.transitionToSpot = function (stopIndex) {
+Tour.prototype.transitionToStop = function (stopIndex) {
     var stop = this.stops[stopIndex];
     var plaque = this.plaque;
 
     plaque.close();
+
+
+
+
+
 
     $.when(
         this._scrollToStop(stop.$el),
@@ -77,7 +79,7 @@ Tour.prototype.nextStop = function () {
     if (this.currentStop === (this.stops.length - 1)) return;  // If there is no next stop.
 
     this.currentStop = this.currentStop + 1;
-    this.transitionToSpot(this.currentStop);
+    this.transitionToStop(this.currentStop);
 };
 
 // Convenience method.
@@ -86,7 +88,7 @@ Tour.prototype.previousStop = function () {
     if (this.currentStop === 0) return;  // If there is no previous stop.
 
     this.currentStop = this.currentStop - 1;
-    this.transitionToSpot(this.currentStop);
+    this.transitionToStop(this.currentStop);
 };
 
 Tour.prototype.resume = function () {

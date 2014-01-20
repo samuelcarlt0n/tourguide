@@ -146,7 +146,7 @@ var Spotlight = function () {
     });
 };
 
-Spotlight.prototype.move = function (center, size) {
+Spotlight.prototype.move = function (stop, size) {
     var d = $.Deferred();
 
     var scale = Math.max(size.width, size.height) * (0.025);
@@ -266,9 +266,6 @@ Tour.prototype.start = function (firstStop) {
 // Update each stop's position data on the tour.
 // Call this after a window.resize event
 Tour.prototype.updateSchedule = function () {
-    this.stops.forEach(function (stop) {
-        stop.update();
-    });
     this.transitionToSpot(this.currentStop);
 };
 
@@ -293,7 +290,9 @@ Tour.prototype.transitionToSpot = function (stopIndex) {
 // Convenience method.
 // Move to the next stop on the tour.
 Tour.prototype.nextStop = function () {
-    if (this.currentStop === (this.stops.length - 1)) return;  // If there is no next stop.
+    if (this.currentStop === (this.stops.length - 1)) {
+        return;  // If there is no next stop.
+    }
 
     this.currentStop = this.currentStop + 1;
     this.transitionToSpot(this.currentStop);
