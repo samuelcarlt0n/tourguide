@@ -2,6 +2,9 @@ html {
     overflow-x: hidden;
 }
 
+
+
+
 .spotlight {
     position: absolute;
     z-index: 10;  /* Pull the layer above the other things. */
@@ -11,8 +14,8 @@ html {
     filter: blur(2px);
 }
 
-.spotlight_fuzzy {
-}
+
+
 
 .plaque {
     position: absolute;
@@ -114,4 +117,66 @@ html {
 
 .plaque-ft-controls > * + * {
     margin-left: 12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.obj {
+    height: 200px;
+    width: 200px;
+    background: green;
+}
+
+.obj_circle {
+    margin-left: 400px;
+    height: 50px;
+    width: 50px;
+    border-radius: 99999px;
+    background: blue;
+}
+
+.obj_rect {
+    margin-left: 70%;
+    height: 70px;
+    background: red;
+}
+
+.obj_square {
+    margin-left: 50%;
+    background: yellow;
+}
+
+.obj_ellips {
+    margin-left: 500px;
+    width: 100px;
+    border-radius: 9999px;
+}
+
+
+
+.menu {
+    display: none;
+}
+
+
+
+.spacer {
+    margin-bottom: 50px;
+}
+
+.spacer_huge {
+    margin-bottom: 1000px;
 }

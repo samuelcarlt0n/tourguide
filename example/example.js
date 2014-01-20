@@ -3,19 +3,27 @@ $(document).ready(function () {
 
     // Fixture data.
     var STOPS = window.STOPS = [{
-        selector : '#stop1',
+        selector : '#one',
         headline : "My Account",
         message  : "Bacon ipsum dolor sit amet tongue pancetta chuck boudin turducken swine. Shankle tail spare ribs bacon sirloin, ribeye boudin pig ball tip pork loin andouille leberkas tri-tip ham hock pork."
     }, {
-        selector : '#stop2',
+        selector : '#two',
         headline : "Top Headlines",
         message  : "Beef ribs capicola turducken frankfurter boudin, pastrami bresaola prosciutto pig sausage."
     }, {
-        selector : '#stop3',
+        selector : '#three',
         headline : "Jump to a Category",
         message  : "Salvia four loko XOXO, Intelligentsia lo-fi keffiyeh skateboard polaroid."
     }, {
-        selector : '#stop4',
+        selector : '#four',
+        headline : "osidhfosdihfosdihofsih.",
+        message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
+    }, {
+        selector : '#five',
+        headline : "osidhfosdihfosdihofsih.",
+        message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
+    }, {
+        selector : '#six',
         headline : "osidhfosdihfosdihofsih.",
         message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
     }];
