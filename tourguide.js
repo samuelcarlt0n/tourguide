@@ -121,7 +121,7 @@ Plaque.prototype._getOptimalDirection = function (gaps) {
 };
 
 var MINIMUM_SCALE = 1.5;
-var ANIMATION_DURATION = 600;
+var ANIMATION_DURATION = 250;
 
 var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
                    'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
@@ -224,7 +224,7 @@ var FIRST_STOP = 0;
 
 // Object representing a tour.
 var Tour = function (stops, firstStop) {
-    if (!stops) {
+    if (!stops or !stops instanceof Array) {
         throw new Error("You can't schedule a tour without any stops.");
     }
     firstStop = firstStop || FIRST_STOP;
