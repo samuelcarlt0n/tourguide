@@ -1,66 +1,32 @@
-/* hashtag yolo */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+html {
+    overflow-x: hidden;
 }
-
-html,
-body {
-    overflow: hidden;
-    height: 100%;
-}
-
-body {
-    position: relative;
-}
-
-.obj {
-    position: absolute;
-    z-index: 0;  /* Just being explicit. */
-    width: 50px;
-    height: 50px;
-    background-color: green;
-}
-
-.obj_rect {
-    width: 200px;
-    background-color: blue;
-}
-
-.obj_circle {
-    border-radius: 999px;
-    background-color: pink;
-}
-
 
 .spotlight {
-    position: relative;
-    z-index: 10;  /* Pull the layer above the test objects */
-    -webkit-filter: blur(1px);
-    -moz-filter: blur(1px);
-    -ms-filter: blur(1px);
-    filter: blur(1px);
+    position: absolute;
+    z-index: 10;  /* Pull the layer above the other things. */
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
+}
+
+.spotlight_fuzzy {
 }
 
 .plaque {
-    position: fixed;
-    z-index: 100;
-    padding: 10px;
+    position: absolute;
+    z-index: 100;  /* Pull above all the things */
     max-width: 550px;
     border-radius: 8px;
     background: white;
-    -webkit-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
-    -moz-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
-    -ms-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
-    filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
 }
 
 .plaque:after {
     position: absolute;
-    width: 0px;
-    height: 0px;
-    border-style: solid;
+    width: 0;
+    height: 0;
     content: " ";
 }
 
@@ -70,6 +36,7 @@ body {
     left: 50%;
     margin-left: -10px;
     border-width: 0 10px 10px 10px;
+    border-style: solid;
     border-color: transparent transparent #ffffff transparent;
 }
 
@@ -79,6 +46,7 @@ body {
     right: -10px;
     margin-top: -10px;
     border-width: 10px 0 10px 10px;
+    border-style: solid;
     border-color: transparent transparent transparent #ffffff;
 }
 
@@ -88,6 +56,7 @@ body {
     left: 50%;
     margin-left: -10px;
     border-width: 10px 10px 0 10px;
+    border-style: solid;
     border-color: #ffffff transparent transparent transparent;
 }
 
@@ -97,9 +66,52 @@ body {
     left: -10px;
     margin-top: -10px;
     border-width: 10px 10px 10px 0;
+    border-style: solid;
     border-color: transparent #ffffff transparent transparent;
 }
 
+/* Arrow points SW. */
+.plaque_ne:after {
+    bottom: 0;
+    left: 0;
+    border-width: 10px 0 0 10px;
+    border-color: transparent transparent transparent #ffffff;
+
+}
+
+.plaque-steps {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 12px;
+    color: #666666;
+}
+
 .plaque-title {
-    font-size: 24px;
+    max-width: 80%;  /* Prevent title from flowing into step count */
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.plaque-bd {
+    padding: 8px;
+}
+
+.plaque-ft {
+    border-top: 1px solid #cccccc;
+    padding: 8px;
+    overflow: hidden;
+}
+
+.plaque-ft-controls {
+    float: right;
+}
+
+.plaque-ft-controls > * {
+    color: #0093D0;
+    cursor: pointer;
+}
+
+.plaque-ft-controls > * + * {
+    margin-left: 12px;
 }

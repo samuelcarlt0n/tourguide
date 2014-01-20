@@ -54,10 +54,11 @@ Tour.prototype.transitionToSpot = function (stopIndex) {
     var plaque = this.plaque;
 
     plaque.close();
-    this.spotlight.move(
-        stop.centerOf$el,
-        stop.sizeOf$el
-    ).then(function () {
+
+    $.when(
+        this._scrollToStop(stop.$el),
+        this.spotlight.move(stop.centerOf$el, stop.sizeOf$el)
+    ).done(function () {
         plaque.open(
             stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
             stop.headline, stop.message, stopIndex + 1
@@ -95,4 +96,13 @@ Tour.prototype.cancel = function () {
     this.spotlight.off();
     this.plaque.close();
     this.tourIsStarted = false;
+};
+
+Tour.prototype._scrollToStop = function ($stop) {
+    var d = $.Deferred();
+
+    var scrollPoint = $stop.offset().top - ($(window).innerHeight() / 2);
+    $('html, body').animate({'scrollTop': scrollPoint}, 250, d.resolve);
+
+    return d.promise();
 };

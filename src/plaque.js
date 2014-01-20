@@ -1,12 +1,18 @@
 var PLAQUE_TEMPLATE =
     '<div class="plaque">' +
-        '<div class="plaque-title js-plaque-title"></div>' +
-        '<div class="plaque-message js-plaque-message"></div>' +
-        '<span class="plaque-stopNumber js-plaque-stopNumber"></span> of ' +
-        '<span class="plaque-totalStops js-plaque-totalStops"></span>' +
-        '<div>' +
-            '<span class="js-tourGuide-previous">prev</span>' +
-            '<span class="js-tourGuide-next">next</span>' +
+        '<div class="plaque-bd">' +
+            '<div class="plaque-steps">' +
+                '<span class="plaque-stopNumber js-plaque-stopNumber"></span> of ' +
+                '<span class="plaque-totalStops js-plaque-totalStops"></span>' +
+            '</div>' +
+            '<div class="plaque-title js-plaque-title"></div>' +
+            '<div class="plaque-message js-plaque-message"></div>' +
+        '</div>' +
+        '<div class="plaque-ft">' +
+            '<div class="plaque-ft-controls">' +
+                '<span class="js-tourGuide-previous">&larr; prev</span>' +
+                '<span class="js-tourGuide-next">next &rarr; </span>' +
+            '</div>' +
         '</div>' +
     '</div>'
 ;
@@ -33,38 +39,44 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var optimalSide = this._getOptimalSide(gaps);
+    var optimalDirection = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
-    switch (optimalSide) {
-        case 'top':
-            top = positionOfStop.top - $elHeight + 'px';
-            left = centerOfStop.left - ($elWidth / 2) + 'px';
-            arrowClass = 'plaque_above';
+    switch (optimalDirection) {
+        case 'left':
+            top = centerOfStop.top - ($elHeight / 2);
+            left = (positionOfStop.left - $elWidth);
+            arrowClass = 'plaque_left';
             break;
 
         case 'right':
-            top = centerOfStop.top - ($elHeight / 2) + 'px';
-            left = positionOfStop.left + sizeOfStop.width + 'px';
+            top = centerOfStop.top - ($elHeight / 2);
+            left = (positionOfStop.left + sizeOfStop.width);
             arrowClass = 'plaque_right';
             break;
 
-        case 'bottom':
-            top = positionOfStop.top + sizeOfStop.height + 'px';
-            left = centerOfStop.left - ($elWidth / 2) + 'px';
-            arrowClass = 'plaque_below';
+        case 'top':
+            top = (positionOfStop.top - $elHeight);
+            left = centerOfStop.left - ($elWidth / 2);
+            arrowClass = 'plaque_above';
             break;
 
-        case 'left':
-            top = centerOfStop.top - ($elHeight / 2) + 'px';
-            left = positionOfStop.left - $elWidth + 'px';
-            arrowClass = 'plaque_left';
+        case 'bottom':
+            top = (positionOfStop.top + sizeOfStop.height);
+            left = centerOfStop.left - ($elWidth / 2);
+            arrowClass = 'plaque_below';
             break;
     }
 
+    // if (top + $elHeight > $(window).innerHeight()) {
+    //     top -= sizeOfStop.height;
+    //     arrowClass = '';
+    // }
+
     this.$el.css({
-        top  : top,
-        left : left
-    }).removeClass(this.arrowClass).addClass(arrowClass).fadeIn(250);
+            top  : top,
+            left : left
+        }).removeClass(this.arrowClass).addClass(arrowClass)
+        .fadeIn(20);
 
     this.arrowClass = arrowClass;
 
@@ -84,17 +96,17 @@ Plaque.prototype.updateContent = function (headline, message, stopNumber) {
     return this;
 };
 
-Plaque.prototype._getOptimalSide = function (gaps) {
-    var optimalSide = null;
+Plaque.prototype._getOptimalDirection = function (gaps) {
+    var optimalDirection = null;
     var largestGap = -1;
-    for (var side in gaps) {
-        if (gaps.hasOwnProperty(side)) {
-            var value = gaps[side];
+    for (var direction in gaps) {
+        if (gaps.hasOwnProperty(direction)) {
+            var value = gaps[direction];
             if (value > largestGap) {
-                optimalSide = side;
+                optimalDirection = direction;
                 largestGap = value;
             }
         }
     }
-    return optimalSide;
+    return optimalDirection;
 };

@@ -9,13 +9,19 @@
 
 var PLAQUE_TEMPLATE =
     '<div class="plaque">' +
-        '<div class="plaque-title js-plaque-title"></div>' +
-        '<div class="plaque-message js-plaque-message"></div>' +
-        '<span class="plaque-stopNumber js-plaque-stopNumber"></span> of ' +
-        '<span class="plaque-totalStops js-plaque-totalStops"></span>' +
-        '<div>' +
-            '<span class="js-tourGuide-previous">prev</span>' +
-            '<span class="js-tourGuide-next">next</span>' +
+        '<div class="plaque-bd">' +
+            '<div class="plaque-steps">' +
+                '<span class="plaque-stopNumber js-plaque-stopNumber"></span> of ' +
+                '<span class="plaque-totalStops js-plaque-totalStops"></span>' +
+            '</div>' +
+            '<div class="plaque-title js-plaque-title"></div>' +
+            '<div class="plaque-message js-plaque-message"></div>' +
+        '</div>' +
+        '<div class="plaque-ft">' +
+            '<div class="plaque-ft-controls">' +
+                '<span class="js-tourGuide-previous">&larr; prev</span>' +
+                '<span class="js-tourGuide-next">next &rarr; </span>' +
+            '</div>' +
         '</div>' +
     '</div>'
 ;
@@ -26,12 +32,12 @@ var Plaque = function (totalStops) {
     this.$message = this.$el.find('.js-plaque-message');
     this.$stopNumber = this.$el.find('.js-plaque-stopNumber');
     this.$totalStops = this.$el.find('.js-plaque-totalStops').text(totalStops);
-    this.arrowClass = '';
+    this.arrowClass = '';  // This class will be applied to the element for the css pointer arrow.
 };
 
 Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
     // Call update first so the element is resized with new content before gettings it's size checked.
-    this.update(headline, message, stopNumber);
+    this.updateContent(headline, message, stopNumber);
 
     var $elHeight = this.$el.outerHeight();
     var $elWidth = this.$el.outerWidth();
@@ -42,38 +48,44 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
         left: positionOfStop.left - $elWidth
     };
 
-    var optimalSide = this._getOptimalSide(gaps);
+    var optimalDirection = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
-    switch (optimalSide) {
-        case 'top':
-            top = positionOfStop.top - $elHeight + 'px';
-            left = centerOfStop.left - ($elWidth / 2) + 'px';
-            arrowClass = 'plaque_above';
+    switch (optimalDirection) {
+        case 'left':
+            top = centerOfStop.top - ($elHeight / 2);
+            left = (positionOfStop.left - $elWidth);
+            arrowClass = 'plaque_left';
             break;
 
         case 'right':
-            top = centerOfStop.top - ($elHeight / 2) + 'px';
-            left = positionOfStop.left + sizeOfStop.width + 'px';
+            top = centerOfStop.top - ($elHeight / 2);
+            left = (positionOfStop.left + sizeOfStop.width);
             arrowClass = 'plaque_right';
             break;
 
-        case 'bottom':
-            top = positionOfStop.top + sizeOfStop.height + 'px';
-            left = centerOfStop.left - ($elWidth / 2) + 'px';
-            arrowClass = 'plaque_below';
+        case 'top':
+            top = (positionOfStop.top - $elHeight);
+            left = centerOfStop.left - ($elWidth / 2);
+            arrowClass = 'plaque_above';
             break;
 
-        case 'left':
-            top = centerOfStop.top - ($elHeight / 2) + 'px';
-            left = positionOfStop.left - $elWidth + 'px';
-            arrowClass = 'plaque_left';
+        case 'bottom':
+            top = (positionOfStop.top + sizeOfStop.height);
+            left = centerOfStop.left - ($elWidth / 2);
+            arrowClass = 'plaque_below';
             break;
     }
 
+    // if (top + $elHeight > $(window).innerHeight()) {
+    //     top -= sizeOfStop.height;
+    //     arrowClass = '';
+    // }
+
     this.$el.css({
-        top  : top,
-        left : left
-    }).removeClass(this.arrowClass).addClass(arrowClass).fadeIn(250);
+            top  : top,
+            left : left
+        }).removeClass(this.arrowClass).addClass(arrowClass)
+        .fadeIn(20);
 
     this.arrowClass = arrowClass;
 
@@ -85,7 +97,7 @@ Plaque.prototype.close = function () {
     return this;
 };
 
-Plaque.prototype.update = function (headline, message, stopNumber) {
+Plaque.prototype.updateContent = function (headline, message, stopNumber) {
     this.$headline.text(headline);
     this.$message.text(message);
     this.$stopNumber.text(stopNumber);
@@ -93,42 +105,42 @@ Plaque.prototype.update = function (headline, message, stopNumber) {
     return this;
 };
 
-Plaque.prototype._getOptimalSide = function (gaps) {
-    var optimalSide = null;
+Plaque.prototype._getOptimalDirection = function (gaps) {
+    var optimalDirection = null;
     var largestGap = -1;
-    for (var side in gaps) {
-        if (gaps.hasOwnProperty(side)) {
-            var value = gaps[side];
+    for (var direction in gaps) {
+        if (gaps.hasOwnProperty(direction)) {
+            var value = gaps[direction];
             if (value > largestGap) {
-                optimalSide = side;
+                optimalDirection = direction;
                 largestGap = value;
             }
         }
     }
-    return optimalSide;
+    return optimalDirection;
 };
 
 var MINIMUM_SCALE = 1.5;
-var ANIMATION_DURATION = 250;
+var ANIMATION_DURATION = 600;
 
 var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
                    'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
 
 
 // Object representing a spotlight for the tour.
+// Constructor
 var Spotlight = function () {
-    this.snap = window.Snap(2000, 2000).attr({
+    this.snap = Snap(2000, 2000).attr({
         'id': 'spotlight',
         'class': 'spotlight'
     });
     this.$el = $(this.snap.node);
 
-
     // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
     // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
-        'fill': '#222222',
-        'fill-opacity': '0.8'
+        'fill': '#111111',
+        'fill-opacity': '0.6'
     });
 };
 
@@ -141,20 +153,17 @@ Spotlight.prototype.move = function (center, size) {
         .transition({
             'top': center.top - (this.$el.height() / 2),
             'left': center.left - (this.$el.width() / 2)
-        }, ANIMATION_DURATION, 'snap', d.resolve);
+        }, ANIMATION_DURATION, 'linear', d.resolve);
 
     return d.promise();
 };
 
 Spotlight.prototype.on = function () {
-    var d = $.Deferred();
     // Add the svg node and then fade in
     this.$el
-        .css({'opacity': 0})
+        .css({'opacity': 0})  // Ensure it is transparent when re-added to the DOM.
         .appendTo('body')
-        .animate({'opacity': 1}, 750, 'swing', d.resolve);
-
-    return d.promise();
+        .animate({'opacity': 1}, 750);  // $.animate needs to be used here - $.transit refused to animate.
 };
 
 Spotlight.prototype.off = function () {
@@ -162,9 +171,8 @@ Spotlight.prototype.off = function () {
     this.$el.transit({'opacity': 0}, 250, 'snap', this.$el.detach);
 };
 
-// Should not be called directly.
 Spotlight.prototype._zoom = function (size) {
-    var scale = Math.max(size.width, size.height) * (0.033);
+    var scale = Math.max(size.width, size.height) * (0.025);
     scale = scale < MINIMUM_SCALE ? MINIMUM_SCALE : scale;
     this.$el.transition({'scale': scale}, ANIMATION_DURATION, 'snap');
 };
@@ -266,10 +274,11 @@ Tour.prototype.transitionToSpot = function (stopIndex) {
     var plaque = this.plaque;
 
     plaque.close();
-    this.spotlight.move(
-        stop.centerOf$el,
-        stop.sizeOf$el
-    ).then(function () {
+
+    $.when(
+        this._scrollToStop(stop.$el),
+        this.spotlight.move(stop.centerOf$el, stop.sizeOf$el)
+    ).done(function () {
         plaque.open(
             stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
             stop.headline, stop.message, stopIndex + 1
@@ -309,15 +318,24 @@ Tour.prototype.cancel = function () {
     this.tourIsStarted = false;
 };
 
-    if ( typeof module === "object" && module && typeof module.exports === "object" ) {
+Tour.prototype._scrollToStop = function ($stop) {
+    var d = $.Deferred();
+
+    var scrollPoint = $stop.offset().top - ($(window).innerHeight() / 2);
+    $('html, body').animate({'scrollTop': scrollPoint}, 250, d.resolve);
+
+    return d.promise();
+};
+
+    if ( typeof module === 'object' && module && typeof module.exports === 'object' ) {
         module.exports = TourGuide;
     } else {
-        if ( typeof define === "function" && define.amd ) {
-            define( "tourguide", [], function () { return tourguide; } );
+        if ( typeof define === 'function' && define.amd ) {
+            define( 'tourguide', [], function () { return tourguide; } );
         }
     }
 
-    if ( typeof window === "object" && typeof window.document === "object" ) {
+    if ( typeof window === 'object' && typeof window.document === 'object' ) {
         window.TourGuide = Tour;
     }
 })(window);
