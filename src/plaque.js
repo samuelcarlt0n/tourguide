@@ -1,12 +1,18 @@
 var PLAQUE_TEMPLATE =
     '<div class="plaque">' +
-        '<div class="plaque-title js-plaque-title"></div>' +
-        '<div class="plaque-message js-plaque-message"></div>' +
-        '<span class="plaque-stopNumber js-plaque-stopNumber"></span> of ' +
-        '<span class="plaque-totalStops js-plaque-totalStops"></span>' +
-        '<div>' +
-            '<span class="js-tourGuide-previous">prev</span>' +
-            '<span class="js-tourGuide-next">next</span>' +
+        '<div class="plaque-bd">' +
+            '<div class="plaque-steps">' +
+                '<span class="plaque-stopNumber js-plaque-stopNumber"></span> of ' +
+                '<span class="plaque-totalStops js-plaque-totalStops"></span>' +
+            '</div>' +
+            '<div class="plaque-title js-plaque-title"></div>' +
+            '<div class="plaque-message js-plaque-message"></div>' +
+        '</div>' +
+        '<div class="plaque-ft">' +
+            '<div class="plaque-ft-controls">' +
+                '<span class="js-tourGuide-previous">&larr; prev</span>' +
+                '<span class="js-tourGuide-next">next &rarr; </span>' +
+            '</div>' +
         '</div>' +
     '</div>'
 ;

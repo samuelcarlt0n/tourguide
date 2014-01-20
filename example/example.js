@@ -2,30 +2,22 @@ $(document).ready(function () {
     'use strict';
 
     // Fixture data.
-    var STOPS = [{
-        selector : '#one',
-        headline : "Stop one",
-        message  : "A lot more stuf describing this stop."
+    var STOPS = window.STOPS = [{
+        selector : '#stop1',
+        headline : "My Account",
+        message  : "Bacon ipsum dolor sit amet tongue pancetta chuck boudin turducken swine. Shankle tail spare ribs bacon sirloin, ribeye boudin pig ball tip pork loin andouille leberkas tri-tip ham hock pork."
     }, {
-        selector : '#two',
-        headline : "Stop Two",
-        message  : "Some text describing this stop."
+        selector : '#stop2',
+        headline : "Top Headlines",
+        message  : "Beef ribs capicola turducken frankfurter boudin, pastrami bresaola prosciutto pig sausage."
     }, {
-        selector : '#three',
-        headline : "Stop Three",
-        message  : "I need to install little ipsum describing this stop."
+        selector : '#stop3',
+        headline : "Jump to a Category",
+        message  : "Salvia four loko XOXO, Intelligentsia lo-fi keffiyeh skateboard polaroid."
     }, {
-        selector : '#four',
-        headline : "Stop four",
-        message  : "I need to install little ipsum describing this stop."
-    }, {
-        selector : '#five',
-        headline : "Stop five",
-        message  : "I need to install little ipsum describing this stop."
-    }, {
-        selector : '#six',
-        headline : "Stop six",
-        message  : "I need to install little ipsum describing this stop."
+        selector : '#stop4',
+        headline : "osidhfosdihfosdihofsih.",
+        message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
     }];
 
 
@@ -69,18 +61,6 @@ $(document).ready(function () {
     };
 
 
-    // Randomly place all of the test stops on the page.
-    (function shuffleTestStops () {
-        $('.obj').each(function () {
-            this.style.top = (Math.floor(Math.random() * 100) + 1) + '%';
-            this.style.left = (Math.floor(Math.random() * 100) + 1) + '%';
-            var minSize = 50;
-            var w = (Math.floor(Math.random() * 100) * 2);
-            var h = (Math.floor(Math.random() * 100) * 2);
-            this.style.width = w > minSize ? w : minSize + 'px';
-            this.style.height = h > minSize ? h : minSize + 'px';
-        });
-    })();
 
     window.website = new Website();
 });

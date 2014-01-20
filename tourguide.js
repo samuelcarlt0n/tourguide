@@ -9,13 +9,19 @@
 
 var PLAQUE_TEMPLATE =
     '<div class="plaque">' +
-        '<div class="plaque-title js-plaque-title"></div>' +
-        '<div class="plaque-message js-plaque-message"></div>' +
-        '<span class="plaque-stopNumber js-plaque-stopNumber"></span> of ' +
-        '<span class="plaque-totalStops js-plaque-totalStops"></span>' +
-        '<div>' +
-            '<span class="js-tourGuide-previous">prev</span>' +
-            '<span class="js-tourGuide-next">next</span>' +
+        '<div class="plaque-bd">' +
+            '<div class="plaque-steps">' +
+                '<span class="plaque-stopNumber js-plaque-stopNumber"></span> of ' +
+                '<span class="plaque-totalStops js-plaque-totalStops"></span>' +
+            '</div>' +
+            '<div class="plaque-title js-plaque-title"></div>' +
+            '<div class="plaque-message js-plaque-message"></div>' +
+        '</div>' +
+        '<div class="plaque-ft">' +
+            '<div class="plaque-ft-controls">' +
+                '<span class="js-tourGuide-previous">&larr; prev</span>' +
+                '<span class="js-tourGuide-next">next &rarr; </span>' +
+            '</div>' +
         '</div>' +
     '</div>'
 ;
@@ -115,7 +121,7 @@ Plaque.prototype._getOptimalDirection = function (gaps) {
 };
 
 var MINIMUM_SCALE = 1.5;
-var ANIMATION_DURATION = 300;
+var ANIMATION_DURATION = 600;
 
 var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
                    'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
@@ -124,7 +130,7 @@ var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
 // Object representing a spotlight for the tour.
 // Constructor
 var Spotlight = function () {
-    this.snap = window.Snap(2000, 2000).attr({
+    this.snap = Snap(2000, 2000).attr({
         'id': 'spotlight',
         'class': 'spotlight'
     });
@@ -133,8 +139,8 @@ var Spotlight = function () {
     // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
     // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
-        'fill': '#333333',
-        'fill-opacity': '0.9'
+        'fill': '#111111',
+        'fill-opacity': '0.6'
     });
 };
 
@@ -147,7 +153,7 @@ Spotlight.prototype.move = function (center, size) {
         .transition({
             'top': center.top - (this.$el.height() / 2),
             'left': center.left - (this.$el.width() / 2)
-        }, ANIMATION_DURATION, 'snap', d.resolve);
+        }, ANIMATION_DURATION, 'linear', d.resolve);
 
     return d.promise();
 };
@@ -166,7 +172,7 @@ Spotlight.prototype.off = function () {
 };
 
 Spotlight.prototype._zoom = function (size) {
-    var scale = Math.max(size.width, size.height) * (0.033);
+    var scale = Math.max(size.width, size.height) * (0.025);
     scale = scale < MINIMUM_SCALE ? MINIMUM_SCALE : scale;
     this.$el.transition({'scale': scale}, ANIMATION_DURATION, 'snap');
 };

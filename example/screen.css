@@ -4,11 +4,11 @@ html {
 
 .spotlight {
     position: absolute;
-    z-index: 10;  /* Pull the layer above the test objects */
-/*    -webkit-filter: blur(1px);
-    -moz-filter: blur(1px);
-    -ms-filter: blur(1px);
-    filter: blur(1px);*/
+    z-index: 10;  /* Pull the layer above the other things. */
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
 }
 
 .spotlight_fuzzy {
@@ -16,12 +16,11 @@ html {
 
 .plaque {
     position: absolute;
-    z-index: 100;
-    padding: 10px;
+    z-index: 100;  /* Pull above all the things */
     max-width: 550px;
     border-radius: 8px;
     background: white;
-    -webkit-filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.5));
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
 }
 
 .plaque:after {
@@ -80,6 +79,39 @@ html {
 
 }
 
+.plaque-steps {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 12px;
+    color: #666666;
+}
+
 .plaque-title {
-    font-size: 24px;
+    max-width: 80%;  /* Prevent title from flowing into step count */
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.plaque-bd {
+    padding: 8px;
+}
+
+.plaque-ft {
+    border-top: 1px solid #cccccc;
+    padding: 8px;
+    overflow: hidden;
+}
+
+.plaque-ft-controls {
+    float: right;
+}
+
+.plaque-ft-controls > * {
+    color: #0093D0;
+    cursor: pointer;
+}
+
+.plaque-ft-controls > * + * {
+    margin-left: 12px;
 }
