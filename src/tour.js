@@ -4,9 +4,14 @@ var FIRST_STOP = 0;
 
 // Object representing a tour.
 var Tour = function (stops, firstStop) {
-    if (!stops or !stops instanceof Array) {
+    if (!stops) {
         throw new Error("You can't schedule a tour without any stops.");
     }
+
+    if (!stops instanceof Array) {
+        throw new Error("The schedule should be an Array");
+    }
+
     firstStop = firstStop || FIRST_STOP;
 
     this.schedule(stops).start(firstStop);
