@@ -1,10 +1,13 @@
+var FILL_COLOR = '#111111';
+var FILL_OPACITY = '0.6';
+var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
+                   'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
+
 var MINIMUM_SCALE = 1.5;
+
 var ANIMATION_DURATION = 250;
 var ANIMATION_EASING = 'snap';
 
-
-var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
-                   'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
 
 
 // Object representing a spotlight for the tour.
@@ -19,8 +22,8 @@ var Spotlight = function () {
     // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
     // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
-        'fill': '#111111',
-        'fill-opacity': '0.6'
+        'fill': FILL_COLOR,
+        'fill-opacity': FILL_OPACITY
     });
 };
 
