@@ -15,4 +15,4 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON("package.json")
 
 
-  grunt.registerTask("default", ["concat:build"])
+  grunt.registerTask("default", ["concat:build", "watch:src"])
