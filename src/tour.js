@@ -4,12 +4,8 @@ var FIRST_STOP = 0;
 
 // Object representing a tour.
 var Tour = function (stops, firstStop) {
-    if (!stops) {
-        throw new Error("You can't schedule a tour without any stops.");
-    }
-    if (!stops instanceof Array) {
-        throw new Error("The schedule should be an Array.");
-    }
+    if (!stops)                  { throw new Error("You can't schedule a tour without any stops."); }
+    if (!stops instanceof Array) { throw new Error("The schedule should be an Array."); }
 
     firstStop = firstStop || FIRST_STOP;
     this.schedule(stops).start(firstStop);
@@ -48,31 +44,6 @@ Tour.prototype.updateSchedule = function () {
     this.transitionToStop(this.currentStopIndex);
 };
 
-// Jump to any stop on the tour.
-Tour.prototype.transitionToStop = function (stopIndex) {
-    this._teardownStopSetup();
-
-    var stop = this.stops[stopIndex];
-    var plaque = this.plaque;
-
-    plaque.close();
-
-    if (stop.setup) { this._setupStop(stop.setup); }
-
-    var offset = stop.getOffset();
-    var dimensions = stop.getDimensions();
-    var scrollPos = stop.getScrollPosition();
-
-    $.when(
-        this.spotlight.move(offset, dimensions),
-        this._scrollToStop(scrollPos)
-    ).done(function () {
-        plaque.open(offset, dimensions, stop.info, stopIndex + 1);
-    });
-
-    this.stop = stop;
-};
-
 // Convenience method.
 // Move to the next stop on the tour.
 Tour.prototype.nextStop = function () {
@@ -105,6 +76,32 @@ Tour.prototype.cancel = function () {
     this.plaque.close();
     this.tourIsStarted = false;
 };
+
+// Jump to any stop on the tour.
+Tour.prototype.transitionToStop = function (stopIndex) {
+    this._teardownStopSetup();
+
+    var stop = this.stops[stopIndex];
+    var plaque = this.plaque;
+
+    plaque.close();
+
+    if (stop.setup) { this._setupStop(stop.setup); }
+
+    var offset = stop.getOffset();
+    var dimensions = stop.getDimensions();
+    var scrollPos = stop.getScrollPosition();
+
+    $.when(
+        this.spotlight.move(offset, dimensions),
+        this._scrollToStop(scrollPos)
+    ).done(function () {
+        plaque.open(offset, dimensions, stop.info, stopIndex + 1);
+    });
+
+    this.stop = stop;
+};
+
 
 Tour.prototype._scrollToStop = function (scrollPosition) {
     var d = $.Deferred();
