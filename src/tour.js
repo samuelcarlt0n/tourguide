@@ -50,22 +50,27 @@ Tour.prototype.updateSchedule = function () {
 
 // Jump to any stop on the tour.
 Tour.prototype.transitionToStop = function (stopIndex) {
-    var stop = this.stops[stopIndex];
+    if (this.stop) {
+        this._teardownStopSetup(this.stop.$setupEl, this.stop.setupEvent);
+    }
+
+    var stop = this.stop = this.stops[stopIndex];
+
     var plaque = this.plaque;
 
     plaque.close();
+
+    this._stopSetup(stop.$setupEl, stop.setupEvent);
 
     var offset = stop.getOffset();
     var dimensions = stop.getDimensions();
     var scrollPos = stop.getScrollPosition();
 
     $.when(
-        this._scrollToStop(scrollPos),
-        this.spotlight.move(offset, dimensions)
+        this.spotlight.move(offset, dimensions),
+        this._scrollToStop(scrollPos)
     ).done(function () {
-        plaque.open(
-            offset, dimensions, stop.info, stopIndex + 1
-        );
+        plaque.open(offset, dimensions, stop.info, stopIndex + 1);
     });
 };
 
@@ -91,6 +96,7 @@ Tour.prototype.resume = function () {
     if (this.tourIsStarted) { return this; }
     this.updateSchedule();
     this.spotlight.on();
+    this.transitionToStop(this.currentStop);
     this.tourIsStarted = true;
 };
 
@@ -107,4 +113,14 @@ Tour.prototype._scrollToStop = function (scrollPosition) {
     return d.promise();
 };
 
+Tour.prototype._stopSetup = function($el, event) {
+    if ($el && event) {
+        $el.trigger(event);
+    }
+};
 
+Tour.prototype._teardownStopSetup = function($el, event) {
+    if ($el && event) {
+        $el.trigger(event);
+    }
+};

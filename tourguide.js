@@ -122,8 +122,6 @@ var Spotlight = function () {
     });
     this.$el = $(this.snap.node);
 
-    // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
-    // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
         'fill': FILL_COLOR,
         'fill-opacity': FILL_OPACITY
@@ -157,7 +155,7 @@ Spotlight.prototype.on = function () {
 
 Spotlight.prototype.off = function () {
     // Fadeout the svg node and then detach
-    this.$el.stop(false, false).transit({'opacity': 0}, 250, this.$el.detach);
+    this.$el.stop(false, false).transition({'opacity': 0}, 250, this.$el.detach);
 };
 
 // Object representing a single stop on the tour.
@@ -167,6 +165,11 @@ var Stop = function (stopData) {
    if (this.$el.length !== 1) {
         var errorMessage = "The stop {headline} - {message} is not present in the DOM, or more than one node was found.";
         throw new Error(errorMessage.replace('{headline}', this.headline).replace('{message}', this.message));
+    }
+
+    if (stopData.setup) {
+        this.$setupEl = $(stopData.setup.selector);
+        this.setupEvent = stopData.setup.event;
     }
 
     this.info = {
@@ -246,22 +249,27 @@ Tour.prototype.updateSchedule = function () {
 
 // Jump to any stop on the tour.
 Tour.prototype.transitionToStop = function (stopIndex) {
-    var stop = this.stops[stopIndex];
+    if (this.stop) {
+        this._teardownStopSetup(this.stop.$setupEl, this.stop.setupEvent);
+    }
+
+    var stop = this.stop = this.stops[stopIndex];
+
     var plaque = this.plaque;
 
     plaque.close();
+
+    this._stopSetup(stop.$setupEl, stop.setupEvent);
 
     var offset = stop.getOffset();
     var dimensions = stop.getDimensions();
     var scrollPos = stop.getScrollPosition();
 
     $.when(
-        this._scrollToStop(scrollPos),
-        this.spotlight.move(offset, dimensions)
+        this.spotlight.move(offset, dimensions),
+        this._scrollToStop(scrollPos)
     ).done(function () {
-        plaque.open(
-            offset, dimensions, stop.info, stopIndex + 1
-        );
+        plaque.open(offset, dimensions, stop.info, stopIndex + 1);
     });
 };
 
@@ -287,6 +295,7 @@ Tour.prototype.resume = function () {
     if (this.tourIsStarted) { return this; }
     this.updateSchedule();
     this.spotlight.on();
+    this.transitionToStop(this.currentStop);
     this.tourIsStarted = true;
 };
 
@@ -303,7 +312,17 @@ Tour.prototype._scrollToStop = function (scrollPosition) {
     return d.promise();
 };
 
+Tour.prototype._stopSetup = function($el, event) {
+    if ($el && event) {
+        $el.trigger(event);
+    }
+};
 
+Tour.prototype._teardownStopSetup = function($el, event) {
+    if ($el && event) {
+        $el.trigger(event);
+    }
+};
 
     if ( typeof module === 'object' && module && typeof module.exports === 'object' ) {
         module.exports = TourGuide;

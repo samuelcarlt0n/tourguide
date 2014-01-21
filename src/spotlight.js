@@ -19,8 +19,6 @@ var Spotlight = function () {
     });
     this.$el = $(this.snap.node);
 
-    // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
-    // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
         'fill': FILL_COLOR,
         'fill-opacity': FILL_OPACITY
@@ -54,5 +52,5 @@ Spotlight.prototype.on = function () {
 
 Spotlight.prototype.off = function () {
     // Fadeout the svg node and then detach
-    this.$el.stop(false, false).transit({'opacity': 0}, 250, this.$el.detach);
+    this.$el.stop(false, false).transition({'opacity': 0}, 250, this.$el.detach);
 };

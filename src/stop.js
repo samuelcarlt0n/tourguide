@@ -7,6 +7,11 @@ var Stop = function (stopData) {
         throw new Error(errorMessage.replace('{headline}', this.headline).replace('{message}', this.message));
     }
 
+    if (stopData.setup) {
+        this.$setupEl = $(stopData.setup.selector);
+        this.setupEvent = stopData.setup.event;
+    }
+
     this.info = {
         headline: stopData.headline || '',
         message: stopData.message || ''
