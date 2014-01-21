@@ -18,12 +18,16 @@ $(document).ready(function () {
         selector : '#four',
         setup: {
             selector: '#three',
-            event: 'click'
+            'event': 'click'
         },
         headline : "osidhfosdihfosdihofsih.",
         message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
     }, {
         selector : '#five',
+        setup: {
+            selector: '#three',
+            'class': 'active'
+        },
         headline : "osidhfosdihfosdihofsih.",
         message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
     }, {
@@ -47,6 +51,8 @@ $(document).ready(function () {
         this.moveToPreviousHandler = this.moveToPrevious.bind(this);
         this.moveToNextHandler = this.moveToNext.bind(this);
 
+        this.onWindowResizeHandler = this.onWindowResize.bind(this);
+
         return this;
     };
 
@@ -54,6 +60,8 @@ $(document).ready(function () {
         $(document).on('keyup', this.onKeyUpHandler);
         $(document.body).on('click', '.js-tourGuide-next', this.moveToNextHandler);
         $(document.body).on('click', '.js-tourGuide-previous', this.moveToPreviousHandler);
+
+        $(window).on('resize', this.onWindowResizeHandler);
 
         return this;
     };
@@ -73,10 +81,17 @@ $(document).ready(function () {
         this.tourGuide.nextStop();
     };
 
+    Website.prototype.onWindowResize = function (event) {
+        this.tourGuide.updateSchedule();
+    };
+
+
 
     $('#three').on('click', function (event) {
-        $('#four').fadeToggle(200);
+        $('#four').toggle();
     });
+
+
 
     window.website = new Website();
 });

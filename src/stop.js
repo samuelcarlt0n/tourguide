@@ -8,8 +8,10 @@ var Stop = function (stopData) {
     }
 
     if (stopData.setup) {
-        this.$setupEl = $(stopData.setup.selector);
-        this.setupEvent = stopData.setup.event;
+        this.setup = {};
+        this.setup.$el = $(stopData.setup.selector);
+        this.setup.setupEvent = stopData.setup.event;
+        this.setup.setupClass = stopData.setup.class;
     }
 
     this.info = {

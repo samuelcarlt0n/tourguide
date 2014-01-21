@@ -17,7 +17,7 @@ var Tour = function (stops, firstStop) {
 
 // This essentially acts a builder for tours.
 Tour.prototype.schedule = function (stops) {
-    this.currentStop = null;
+    this.currentStopIndex = null;
 
     var _stops = [];
     stops.forEach(function (stop) {
@@ -34,8 +34,8 @@ Tour.prototype.schedule = function (stops) {
 
 // Start the tour.
 Tour.prototype.start = function (firstStop) {
-    this.currentStop = firstStop;
-    this.transitionToStop(this.currentStop);
+    this.currentStopIndex = firstStop;
+    this.transitionToStop(this.currentStopIndex);
 
     this.tourIsStarted = true;
 
@@ -45,22 +45,19 @@ Tour.prototype.start = function (firstStop) {
 // Update each stop's position data on the tour.
 // Call this after a window.resize event
 Tour.prototype.updateSchedule = function () {
-    this.transitionToStop(this.currentStop);
+    this.transitionToStop(this.currentStopIndex);
 };
 
 // Jump to any stop on the tour.
 Tour.prototype.transitionToStop = function (stopIndex) {
-    if (this.stop) {
-        this._teardownStopSetup(this.stop.$setupEl, this.stop.setupEvent);
-    }
+    this._teardownStopSetup();
 
-    var stop = this.stop = this.stops[stopIndex];
-
+    var stop = this.stops[stopIndex];
     var plaque = this.plaque;
 
     plaque.close();
 
-    this._stopSetup(stop.$setupEl, stop.setupEvent);
+    if (stop.setup) { this._setupStop(stop.setup); }
 
     var offset = stop.getOffset();
     var dimensions = stop.getDimensions();
@@ -72,31 +69,33 @@ Tour.prototype.transitionToStop = function (stopIndex) {
     ).done(function () {
         plaque.open(offset, dimensions, stop.info, stopIndex + 1);
     });
+
+    this.stop = stop;
 };
 
 // Convenience method.
 // Move to the next stop on the tour.
 Tour.prototype.nextStop = function () {
-    if (this.currentStop === (this.stops.length - 1)) { return; }  // If there is no next stop.
+    if (this.currentStopIndex === (this.stops.length - 1)) { return; }  // If there is no next stop.
 
-    this.currentStop = this.currentStop + 1;
-    this.transitionToStop(this.currentStop);
+    this.currentStopIndex++;
+    this.transitionToStop(this.currentStopIndex);
 };
 
 // Convenience method.
 // Move to the previous stop on the tour.
 Tour.prototype.previousStop = function () {
-    if (this.currentStop === 0) { return; }  // If there is no previous stop.
+    if (this.currentStopIndex === 0) { return; }  // If there is no previous stop.
 
-    this.currentStop = this.currentStop - 1;
-    this.transitionToStop(this.currentStop);
+    this.currentStopIndex--;
+    this.transitionToStop(this.currentStopIndex);
 };
 
 Tour.prototype.resume = function () {
     if (this.tourIsStarted) { return this; }
     this.updateSchedule();
     this.spotlight.on();
-    this.transitionToStop(this.currentStop);
+    this.transitionToStop(this.currentStopIndex);
     this.tourIsStarted = true;
 };
 
@@ -113,14 +112,22 @@ Tour.prototype._scrollToStop = function (scrollPosition) {
     return d.promise();
 };
 
-Tour.prototype._stopSetup = function($el, event) {
-    if ($el && event) {
-        $el.trigger(event);
+Tour.prototype._setupStop = function (setup) {
+    if (setup.setupEvent) {
+        setup.$el.trigger(setup.setupEvent);
+    }
+    if (setup.setupClass) {
+        setup.$el.addClass(setup.setupClass);
     }
 };
 
-Tour.prototype._teardownStopSetup = function($el, event) {
-    if ($el && event) {
-        $el.trigger(event);
-    }
+Tour.prototype._teardownStopSetup = function () {
+    var stop = this.stop;
+    if (!stop) { return; }
+
+    var setup = stop.setup;
+    if (!setup) { return; }
+
+    if (setup.setupEvent) { setup.$el.trigger(setup.setupEvent); }
+    if (setup.setupClass) { setup.$el.removeClass(setup.setupClass); }
 };
