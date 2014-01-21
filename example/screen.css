@@ -20,10 +20,18 @@ html {
 .plaque {
     position: absolute;
     z-index: 100;  /* Pull above all the things */
-    max-width: 550px;
+    max-width: 90%;
     border-radius: 8px;
     background: white;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    left: 5% !important;
+}
+
+@media (min-width: 768px) {
+    .plaque {
+        max-width: 300px;
+        left: auto;
+    }
 }
 
 .plaque:after {
