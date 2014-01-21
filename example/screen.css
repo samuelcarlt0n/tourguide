@@ -181,3 +181,8 @@ html {
 .spacer_huge {
     margin-bottom: 1000px;
 }
+
+
+.active {
+    background: hotpink !important;
+}
