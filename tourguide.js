@@ -8,6 +8,7 @@
     }
 
 var MAX_DISTANCE = 50;
+var MIN_DISTANCE_FROM_EDGE = 10;
 
 
 var PLAQUE_TEMPLATE =
@@ -47,8 +48,6 @@ Plaque.prototype.open = function (offset, size, info, stopNumber) {
 
     var top, left, arrowClass;
 
-
-
     if (offset.top + size.height + plaqueHeight < $(window).height()) {
         top = (offset.top + size.height) + (plaqueHeight * 1.08  < MAX_DISTANCE ? plaqueHeight * 1.08 : MAX_DISTANCE);
         left = (offset.left + (size.width / 2)) - (plaqueWidth / 2);
@@ -76,8 +75,8 @@ Plaque.prototype.open = function (offset, size, info, stopNumber) {
     this.$el
         .stop(false, false)
         .css({
-            top  : top,
-            left : left
+            top  : top < 0 ? MIN_DISTANCE_FROM_EDGE : top,
+            left : left < 0 ? MIN_DISTANCE_FROM_EDGE : left
         })
         .removeClass(this.arrowClass)
         .addClass(arrowClass)
@@ -167,17 +166,17 @@ var Stop = function (stopData) {
         throw new Error(errorMessage.replace('{headline}', this.headline).replace('{message}', this.message));
     }
 
+    this.info = {
+        headline: stopData.headline || '',
+        message: stopData.message || ''
+    };
+
     if (stopData.setup) {
         this.setup = {};
         this.setup.$el = $(stopData.setup.selector);
         this.setup.setupEvent = stopData.setup.event;
         this.setup.setupClass = stopData.setup.class;
     }
-
-    this.info = {
-        headline: stopData.headline || '',
-        message: stopData.message || ''
-    };
 };
 
 Stop.prototype.getOffset = function () {
