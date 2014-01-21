@@ -27,7 +27,7 @@ var Spotlight = function () {
     });
 };
 
-Spotlight.prototype.move = function (top, left, size) {
+Spotlight.prototype.move = function (offset, size) {
     var d = $.Deferred();
 
     var scale = Math.max(size.width, size.height) * (0.025);
@@ -37,8 +37,8 @@ Spotlight.prototype.move = function (top, left, size) {
         .stop(false, false)
         .transition({
             'scale': scale,
-            'top': center.top - (this.$el.height() / 2),
-            'left': center.left - (this.$el.width() / 2)
+            'top': ((offset.top + (size.height / 2)) - (this.$el.height() / 2)),
+            'left': ((offset.left + (size.width / 2)) - (this.$el.width() / 2))
         }, ANIMATION_DURATION, ANIMATION_EASING, d.resolve);
 
     return d.promise();
@@ -54,5 +54,5 @@ Spotlight.prototype.on = function () {
 
 Spotlight.prototype.off = function () {
     // Fadeout the svg node and then detach
-    this.$el.transit({'opacity': 0}, 250, this.$el.detach);
+    this.$el.stop(false, false).transit({'opacity': 0}, 250, this.$el.detach);
 };

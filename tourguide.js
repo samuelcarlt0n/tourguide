@@ -7,6 +7,9 @@
         };
     }
 
+var MAX_DISTANCE = 50;
+
+
 var PLAQUE_TEMPLATE =
     '<div class="plaque">' +
         '<div class="plaque-bd">' +
@@ -35,56 +38,49 @@ var Plaque = function (totalStops) {
     this.arrowClass = '';  // This class will be applied to the element for the css pointer arrow.
 };
 
-Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
+Plaque.prototype.open = function (offset, size, info, stopNumber) {
     // Call update first so the element is resized with new content before gettings it's size checked.
-    this.updateContent(headline, message, stopNumber);
+    this._updateContent(info, stopNumber);
 
-    var $elHeight = this.$el.outerHeight();
-    var $elWidth = this.$el.outerWidth();
-    var gaps = {
-        top: positionOfStop.top - $elHeight,
-        right: positionOfStop.right - $elWidth,
-        bottom: positionOfStop.bottom - $elHeight,
-        left: positionOfStop.left - $elWidth
-    };
+    var plaqueHeight = this.$el.outerHeight();
+    var plaqueWidth = this.$el.outerWidth();
 
-    var optimalDirection = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
-    switch (optimalDirection) {
-        case 'left':
-            top = centerOfStop.top - ($elHeight / 2);
-            left = (positionOfStop.left - $elWidth);
-            arrowClass = 'plaque_left';
-            break;
 
-        case 'right':
-            top = centerOfStop.top - ($elHeight / 2);
-            left = (positionOfStop.left + sizeOfStop.width);
-            arrowClass = 'plaque_right';
-            break;
 
-        case 'top':
-            top = (positionOfStop.top - $elHeight);
-            left = centerOfStop.left - ($elWidth / 2);
-            arrowClass = 'plaque_above';
-            break;
 
-        case 'bottom':
-            top = (positionOfStop.top + sizeOfStop.height);
-            left = centerOfStop.left - ($elWidth / 2);
-            arrowClass = 'plaque_below';
-            break;
+    if (offset.top + size.height + plaqueHeight < $(window).height()) {
+        top = (offset.top + size.height) + (plaqueHeight * 1.08  < MAX_DISTANCE ? plaqueHeight * 1.08 : MAX_DISTANCE);
+        left = (offset.left + (size.width / 2)) - (plaqueWidth / 2);
+        arrowClass = 'plaque_below';
     }
 
-    // if (top + $elHeight > $(window).innerHeight()) {
-    //     top -= sizeOfStop.height;
-    //     arrowClass = '';
-    // }
+    if ($(window).width() - (offset.left + size.width) > plaqueWidth) {
+        top = (offset.top + (size.height / 2)) - (plaqueHeight / 2);
+        left = (offset.left + size.width) * 1.08;
+        arrowClass = 'plaque_right';
+    }
 
-    this.$el.css({
+    if (offset.top > plaqueHeight) {
+        top = (offset.top - plaqueHeight) - (plaqueHeight * 1.08  < MAX_DISTANCE ? plaqueHeight * 1.08 : MAX_DISTANCE);
+        left = (offset.left + (size.width / 2)) - (plaqueWidth / 2);
+        arrowClass = 'plaque_above';
+    }
+
+    if (offset.left > plaqueWidth) {
+        top = (offset.top + (size.height / 2)) - (plaqueHeight / 2);
+        left = offset.left - (plaqueWidth * 1.08);
+        arrowClass = 'plaque_left';
+    }
+
+    this.$el
+        .stop(false, false)
+        .css({
             top  : top,
             left : left
-        }).removeClass(this.arrowClass).addClass(arrowClass)
+        })
+        .removeClass(this.arrowClass)
+        .addClass(arrowClass)
         .fadeIn(20);
 
     this.arrowClass = arrowClass;
@@ -93,40 +89,28 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
 };
 
 Plaque.prototype.close = function () {
-    this.$el.hide();
+    this.$el.stop(false, false).hide();
     return this;
 };
 
-Plaque.prototype.updateContent = function (headline, message, stopNumber) {
-    this.$headline.text(headline);
-    this.$message.text(message);
+Plaque.prototype._updateContent = function (info, stopNumber) {
+    this.$headline.text(info.headline);
+    this.$message.text(info.message);
     this.$stopNumber.text(stopNumber);
 
     return this;
 };
 
-Plaque.prototype._getOptimalDirection = function (gaps) {
-    var optimalDirection = null;
-    var largestGap = -1;
-    for (var direction in gaps) {
-        if (gaps.hasOwnProperty(direction)) {
-            var value = gaps[direction];
-            if (value > largestGap) {
-                optimalDirection = direction;
-                largestGap = value;
-            }
-        }
-    }
-    return optimalDirection;
-};
+var FILL_COLOR = '#111111';
+var FILL_OPACITY = '0.6';
+var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
+                   'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
 
 var MINIMUM_SCALE = 1.5;
+
 var ANIMATION_DURATION = 250;
 var ANIMATION_EASING = 'snap';
 
-
-var PINHOLE_PATH = 'M0,0v2000h2000V0H0z ' +  // Extra space is intentional
-                   'M1000,1025c-13.807,0-25-11.193-25-25s11.193-25,25-25s25,11.193,25,25S1013.807,1025,1000,1025z';
 
 
 // Object representing a spotlight for the tour.
@@ -141,12 +125,12 @@ var Spotlight = function () {
     // this.filterBlur = this.snap.paper.filter('<feGaussianBlur stdDeviation="2"/>');
     // For the filter effect apply to pinHole -> `filter: this.filterBlur`
     this.pinHole = this.snap.path(PINHOLE_PATH).attr({
-        'fill': '#111111',
-        'fill-opacity': '0.6'
+        'fill': FILL_COLOR,
+        'fill-opacity': FILL_OPACITY
     });
 };
 
-Spotlight.prototype.move = function (stop, size) {
+Spotlight.prototype.move = function (offset, size) {
     var d = $.Deferred();
 
     var scale = Math.max(size.width, size.height) * (0.025);
@@ -156,8 +140,8 @@ Spotlight.prototype.move = function (stop, size) {
         .stop(false, false)
         .transition({
             'scale': scale,
-            'top': center.top - (this.$el.height() / 2),
-            'left': center.left - (this.$el.width() / 2)
+            'top': ((offset.top + (size.height / 2)) - (this.$el.height() / 2)),
+            'left': ((offset.left + (size.width / 2)) - (this.$el.width() / 2))
         }, ANIMATION_DURATION, ANIMATION_EASING, d.resolve);
 
     return d.promise();
@@ -173,48 +157,41 @@ Spotlight.prototype.on = function () {
 
 Spotlight.prototype.off = function () {
     // Fadeout the svg node and then detach
-    this.$el.transit({'opacity': 0}, 250, this.$el.detach);
+    this.$el.stop(false, false).transit({'opacity': 0}, 250, this.$el.detach);
 };
 
 // Object representing a single stop on the tour.
 var Stop = function (stopData) {
-    // Main text.
-    this.headline = stopData.headline || '';
-    // Supporting copy.
-    this.message = stopData.message || '';
-
     this.$el = $(stopData.selector);
 
-    if (this.$el.length !== 1) {
-        throw new Error(
-            "The stop '" + this.headline + " - " + this.message +
-            "' is not present in the DOM, or more than one node was found."
-        );
+   if (this.$el.length !== 1) {
+        var errorMessage = "The stop {headline} - {message} is not present in the DOM, or more than one node was found.";
+        throw new Error(errorMessage.replace('{headline}', this.headline).replace('{message}', this.message));
     }
 
-    this._updatePositionalData();
-};
-
-Stop.prototype.update = function () {
-    this._updatePositionalData();
-};
-
-Stop.prototype._updatePositionalData = function () {
-    // {width, height} of the $el including borders.
-    this.sizeOf$el = { width: this.$el.outerWidth(), height: this.$el.outerHeight() };
-
-    // {top, right, bottom, left} of the $el relative to the document.
-    this.positionOf$el = this.$el.offset();
-    this.positionOf$el.top = parseInt(this.positionOf$el.top);
-    this.positionOf$el.right = parseInt($(document).width() - (this.positionOf$el.left + this.sizeOf$el.width));
-    this.positionOf$el.bottom = parseInt($(document).height() - (this.positionOf$el.top + this.sizeOf$el.height));
-    this.positionOf$el.left = parseInt(this.positionOf$el.left);
-
-    // {top, left} center point of the $el relative to the document.
-    this.centerOf$el = {
-        top: (this.sizeOf$el.height / 2) + this.positionOf$el.top,
-        left: (this.sizeOf$el.width / 2) + this.positionOf$el.left
+    this.info = {
+        headline: stopData.headline || '',
+        message: stopData.message || ''
     };
+};
+
+Stop.prototype.getOffset = function () {
+    var stopOffset = this.$el.offset();
+    return {
+        top: parseInt(stopOffset.top, 10),
+        left: parseInt(stopOffset.left, 10)
+    };
+};
+
+Stop.prototype.getDimensions = function () {
+    return {
+        width: parseInt(this.$el.width(), 10),
+        height: parseInt(this.$el.height(), 10)
+    };
+};
+
+Stop.prototype.getScrollPosition = function () {
+   return parseInt(this.$el.offset().top - ($(window).innerHeight() / 2), 10);
 };
 
 // Index to start the tour at.
@@ -226,13 +203,11 @@ var Tour = function (stops, firstStop) {
     if (!stops) {
         throw new Error("You can't schedule a tour without any stops.");
     }
-
     if (!stops instanceof Array) {
-        throw new Error("The schedule should be an Array");
+        throw new Error("The schedule should be an Array.");
     }
 
     firstStop = firstStop || FIRST_STOP;
-
     this.schedule(stops).start(firstStop);
 };
 
@@ -256,7 +231,7 @@ Tour.prototype.schedule = function (stops) {
 // Start the tour.
 Tour.prototype.start = function (firstStop) {
     this.currentStop = firstStop;
-    this.transitionToSpot(this.currentStop);
+    this.transitionToStop(this.currentStop);
 
     this.tourIsStarted = true;
 
@@ -266,23 +241,26 @@ Tour.prototype.start = function (firstStop) {
 // Update each stop's position data on the tour.
 // Call this after a window.resize event
 Tour.prototype.updateSchedule = function () {
-    this.transitionToSpot(this.currentStop);
+    this.transitionToStop(this.currentStop);
 };
 
 // Jump to any stop on the tour.
-Tour.prototype.transitionToSpot = function (stopIndex) {
+Tour.prototype.transitionToStop = function (stopIndex) {
     var stop = this.stops[stopIndex];
     var plaque = this.plaque;
 
     plaque.close();
 
+    var offset = stop.getOffset();
+    var dimensions = stop.getDimensions();
+    var scrollPos = stop.getScrollPosition();
+
     $.when(
-        this._scrollToStop(stop.$el),
-        this.spotlight.move(stop.centerOf$el, stop.sizeOf$el)
+        this._scrollToStop(scrollPos),
+        this.spotlight.move(offset, dimensions)
     ).done(function () {
         plaque.open(
-            stop.positionOf$el, stop.centerOf$el, stop.sizeOf$el,
-            stop.headline, stop.message, stopIndex + 1
+            offset, dimensions, stop.info, stopIndex + 1
         );
     });
 };
@@ -290,45 +268,42 @@ Tour.prototype.transitionToSpot = function (stopIndex) {
 // Convenience method.
 // Move to the next stop on the tour.
 Tour.prototype.nextStop = function () {
-    if (this.currentStop === (this.stops.length - 1)) {
-        return;  // If there is no next stop.
-    }
+    if (this.currentStop === (this.stops.length - 1)) { return; }  // If there is no next stop.
 
     this.currentStop = this.currentStop + 1;
-    this.transitionToSpot(this.currentStop);
+    this.transitionToStop(this.currentStop);
 };
 
 // Convenience method.
 // Move to the previous stop on the tour.
 Tour.prototype.previousStop = function () {
-    if (this.currentStop === 0) return;  // If there is no previous stop.
+    if (this.currentStop === 0) { return; }  // If there is no previous stop.
 
     this.currentStop = this.currentStop - 1;
-    this.transitionToSpot(this.currentStop);
+    this.transitionToStop(this.currentStop);
 };
 
 Tour.prototype.resume = function () {
-    if (this.tourIsStarted) return this;
+    if (this.tourIsStarted) { return this; }
     this.updateSchedule();
     this.spotlight.on();
     this.tourIsStarted = true;
 };
 
 Tour.prototype.cancel = function () {
-    if (!this.tourIsStarted) return this;
+    if (!this.tourIsStarted) { return this; }
     this.spotlight.off();
     this.plaque.close();
     this.tourIsStarted = false;
 };
 
-Tour.prototype._scrollToStop = function ($stop) {
+Tour.prototype._scrollToStop = function (scrollPosition) {
     var d = $.Deferred();
-
-    var scrollPoint = $stop.offset().top - ($(window).innerHeight() / 2);
-    $('html, body').animate({'scrollTop': scrollPoint}, 250, d.resolve);
-
+    $('html, body').stop(false, false).animate({'scrollTop': scrollPosition}, 250, d.resolve);
     return d.promise();
 };
+
+
 
     if ( typeof module === 'object' && module && typeof module.exports === 'object' ) {
         module.exports = TourGuide;

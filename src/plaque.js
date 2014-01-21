@@ -1,3 +1,6 @@
+var MAX_DISTANCE = 50;
+
+
 var PLAQUE_TEMPLATE =
     '<div class="plaque">' +
         '<div class="plaque-bd">' +
@@ -26,56 +29,49 @@ var Plaque = function (totalStops) {
     this.arrowClass = '';  // This class will be applied to the element for the css pointer arrow.
 };
 
-Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, headline, message, stopNumber) {
+Plaque.prototype.open = function (offset, size, info, stopNumber) {
     // Call update first so the element is resized with new content before gettings it's size checked.
-    this.updateContent(headline, message, stopNumber);
+    this._updateContent(info, stopNumber);
 
-    var $elHeight = this.$el.outerHeight();
-    var $elWidth = this.$el.outerWidth();
-    var gaps = {
-        top: positionOfStop.top - $elHeight,
-        right: positionOfStop.right - $elWidth,
-        bottom: positionOfStop.bottom - $elHeight,
-        left: positionOfStop.left - $elWidth
-    };
+    var plaqueHeight = this.$el.outerHeight();
+    var plaqueWidth = this.$el.outerWidth();
 
-    var optimalDirection = this._getOptimalDirection(gaps);
     var top, left, arrowClass;
-    switch (optimalDirection) {
-        case 'left':
-            top = centerOfStop.top - ($elHeight / 2);
-            left = (positionOfStop.left - $elWidth);
-            arrowClass = 'plaque_left';
-            break;
 
-        case 'right':
-            top = centerOfStop.top - ($elHeight / 2);
-            left = (positionOfStop.left + sizeOfStop.width);
-            arrowClass = 'plaque_right';
-            break;
 
-        case 'top':
-            top = (positionOfStop.top - $elHeight);
-            left = centerOfStop.left - ($elWidth / 2);
-            arrowClass = 'plaque_above';
-            break;
 
-        case 'bottom':
-            top = (positionOfStop.top + sizeOfStop.height);
-            left = centerOfStop.left - ($elWidth / 2);
-            arrowClass = 'plaque_below';
-            break;
+    if (offset.top + size.height + plaqueHeight < $(window).height()) {
+        top = (offset.top + size.height) + (plaqueHeight * 1.08  < MAX_DISTANCE ? plaqueHeight * 1.08 : MAX_DISTANCE);
+        left = (offset.left + (size.width / 2)) - (plaqueWidth / 2);
+        arrowClass = 'plaque_below';
     }
 
-    // if (top + $elHeight > $(window).innerHeight()) {
-    //     top -= sizeOfStop.height;
-    //     arrowClass = '';
-    // }
+    if ($(window).width() - (offset.left + size.width) > plaqueWidth) {
+        top = (offset.top + (size.height / 2)) - (plaqueHeight / 2);
+        left = (offset.left + size.width) * 1.08;
+        arrowClass = 'plaque_right';
+    }
 
-    this.$el.css({
+    if (offset.top > plaqueHeight) {
+        top = (offset.top - plaqueHeight) - (plaqueHeight * 1.08  < MAX_DISTANCE ? plaqueHeight * 1.08 : MAX_DISTANCE);
+        left = (offset.left + (size.width / 2)) - (plaqueWidth / 2);
+        arrowClass = 'plaque_above';
+    }
+
+    if (offset.left > plaqueWidth) {
+        top = (offset.top + (size.height / 2)) - (plaqueHeight / 2);
+        left = offset.left - (plaqueWidth * 1.08);
+        arrowClass = 'plaque_left';
+    }
+
+    this.$el
+        .stop(false, false)
+        .css({
             top  : top,
             left : left
-        }).removeClass(this.arrowClass).addClass(arrowClass)
+        })
+        .removeClass(this.arrowClass)
+        .addClass(arrowClass)
         .fadeIn(20);
 
     this.arrowClass = arrowClass;
@@ -84,29 +80,14 @@ Plaque.prototype.open = function (positionOfStop, centerOfStop, sizeOfStop, head
 };
 
 Plaque.prototype.close = function () {
-    this.$el.hide();
+    this.$el.stop(false, false).hide();
     return this;
 };
 
-Plaque.prototype.updateContent = function (headline, message, stopNumber) {
-    this.$headline.text(headline);
-    this.$message.text(message);
+Plaque.prototype._updateContent = function (info, stopNumber) {
+    this.$headline.text(info.headline);
+    this.$message.text(info.message);
     this.$stopNumber.text(stopNumber);
 
     return this;
-};
-
-Plaque.prototype._getOptimalDirection = function (gaps) {
-    var optimalDirection = null;
-    var largestGap = -1;
-    for (var direction in gaps) {
-        if (gaps.hasOwnProperty(direction)) {
-            var value = gaps[direction];
-            if (value > largestGap) {
-                optimalDirection = direction;
-                largestGap = value;
-            }
-        }
-    }
-    return optimalDirection;
 };
