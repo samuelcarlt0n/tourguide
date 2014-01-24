@@ -30,7 +30,7 @@ html {
 @media (min-width: 768px) {
     .plaque {
         max-width: 300px;
-        left: auto;
+        left: auto !important;
     }
 }
 

@@ -1,4 +1,11 @@
-// Object representing a single stop on the tour.
+/**
+@constructor
+Model for a single stop on the tour.
+Acts a builder for stops.
+
+@param {Object} stopData {selector, headline, message, setup:{selector, event, class}}
+                         Initail data for a stop. Only (selector && (headline || message)) are required.
+*/
 var Stop = function (stopData) {
     this.$el = $(stopData.selector);
 
@@ -20,6 +27,12 @@ var Stop = function (stopData) {
     };
 };
 
+/**
+@method
+Get the offset of the stop relative to the document.
+
+@return {Object} {top, left} in px.
+*/
 Stop.prototype.getOffset = function () {
     var stopOffset = this.$el.offset();
     return {
@@ -28,6 +41,12 @@ Stop.prototype.getOffset = function () {
     };
 };
 
+/**
+@method
+Get the size of the stop.
+
+@return {Object} {height, width} in px.
+*/
 Stop.prototype.getDimensions = function () {
     return {
         width: parseInt(this.$el.width(), 10),
@@ -35,6 +54,13 @@ Stop.prototype.getDimensions = function () {
     };
 };
 
+/**
+@method
+Get the scrollTo position of the stop.
+Should center the element on the page if possible.
+
+@return {Number} Scroll position of the element relative to the document.
+*/
 Stop.prototype.getScrollPosition = function () {
    return parseInt(this.$el.offset().top - ($(window).innerHeight() / 2), 10);
 };
