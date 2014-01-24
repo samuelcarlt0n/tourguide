@@ -24,7 +24,7 @@ html {
     border-radius: 8px;
     background: white;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-    left: 5% !important;
+    left: 5%;
 }
 
 @media (min-width: 768px) {
@@ -194,3 +194,17 @@ html {
 .active {
     background: hotpink !important;
 }
+
+
+.hover {
+    width: 100px;
+    height: 80px;
+    background: black;
+}
+
+.hover:hover {
+    background: cyan;
+}
+
+
+

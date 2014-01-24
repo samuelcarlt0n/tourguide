@@ -2,6 +2,7 @@
 var DISTANCE_MULTIPLIER = 1.08;
 // Maximum distance the tooltap can be from the edge of a stop in pixels.
 var MAX_DISTANCE = 50;
+var MIN_DISTANCE_FROM_EDGE = 10;
 
 // Not totally thrilled with string concat'ing templates. If the project allows, this could and
 // should be replaced with an actual template.

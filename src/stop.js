@@ -14,17 +14,17 @@ var Stop = function (stopData) {
         throw new Error(errorMessage.replace('{headline}', this.headline).replace('{message}', this.message));
     }
 
+    this.info = {
+        headline: stopData.headline || '',
+        message: stopData.message || ''
+    };
+
     if (stopData.setup) {
         this.setup = {};
         this.setup.$el = $(stopData.setup.selector);
         this.setup.setupEvent = stopData.setup.event;
         this.setup.setupClass = stopData.setup.class;
     }
-
-    this.info = {
-        headline: stopData.headline || '',
-        message: stopData.message || ''
-    };
 };
 
 /**

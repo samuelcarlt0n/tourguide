@@ -3,37 +3,45 @@ $(document).ready(function () {
 
     // Fixture data.
     var STOPS = window.STOPS = [{
-        selector : '#one',
-        headline : "My Account",
-        message  : "Bacon ipsum dolor sit amet tongue pancetta chuck boudin turducken swine. Shankle tail spare ribs bacon sirloin, ribeye boudin pig ball tip pork loin andouille leberkas tri-tip ham hock pork."
+        'selector': '#one',
+        'headline': "My Account",
+        'message': "Bacon ipsum dolor sit amet tongue pancetta chuck boudin turducken swine. Shankle tail spare ribs bacon sirloin, ribeye boudin pig ball tip pork loin andouille leberkas tri-tip ham hock pork."
     }, {
-        selector : '#two',
-        headline : "Top Headlines",
-        message  : "Beef ribs capicola turducken frankfurter boudin, pastrami bresaola prosciutto pig sausage."
+        'selector': '#two',
+        'headline': "Top Headlines",
+        'message': "Beef ribs capicola turducken frankfurter boudin, pastrami bresaola prosciutto pig sausage."
     }, {
-        selector : '#three',
-        headline : "Jump to a Category",
-        message  : "Salvia four loko XOXO, Intelligentsia lo-fi keffiyeh skateboard polaroid."
+        'selector': '#three',
+        'headline': "Jump to a Category",
+        'message': "Salvia four loko XOXO, Intelligentsia lo-fi keffiyeh skateboard polaroid."
     }, {
-        selector : '#four',
-        setup: {
-            selector: '#three',
+        'selector': '#four',
+        'setup': {
+            'selector': '#three',
             'event': 'click'
         },
-        headline : "osidhfosdihfosdihofsih.",
-        message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
+        'headline': "osidhfosdihfosdihofsih.",
+        'message': "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
     }, {
-        selector : '#five',
-        setup: {
-            selector: '#three',
+        'selector': '#five',
+        'setup': {
+            'selector': '#three',
             'class': 'active'
         },
-        headline : "osidhfosdihfosdihofsih.",
-        message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
+        'headline': "osidhfosdihfosdihofsih.",
+        'message': "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
     }, {
-        selector : '#six',
-        headline : "osidhfosdihfosdihofsih.",
-        message  : "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
+        'selector': '#six',
+        'headline': "osidhfosdihfosdihofsih.",
+        'message': "amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel. berliner weisse wort chiller adjunct hydrometer alcohol aau!"
+    }, {
+        'selector': '#seven',
+        'setup': {
+            'selector': '#seven',
+            'event': 'hover'
+        },
+        'headline': "Yeahhwefw  ewf hwefwerwe hhhhhh",
+        'message': "Woooooo ooooooooooooooowef wf wef oo fwoooooooooo  oaosiuwe ffiuawef sgdfiug asdfiugasdfi ugasdfiug asdifug asdiuf gasidufg iusdfgiasu dfgiuas gfiusadg fiug "
     }];
 
 
